@@ -13,7 +13,7 @@ Step 2.) Modify "/bin/setup_postgre.sh"
 
 - Once completed modify the .env file and to your updated username and password
 
-Step 2.) Run `./bin/setup_postgre.sh`
+Step 3.) Run `./bin/setup_postgre.sh`
 
 - This will install the appropriate version of the postgre docker container onto your computer
 
@@ -34,7 +34,7 @@ Step 2.) Download the required libraries
 
 - Run `pip install -r requirements.txt`
 
-Step 3.) Create a .env file that contains the following content and modify tempPassword and my_new_databse to whatever values you'd like
+Step 3.) Create a .env file that contains the following content and modify tempPassword and my_new_databse to whatever values you'd like (password must match password in `bin/setup_postgre.sh`)
 
 ```
 DB_HOST=localhost

@@ -1,6 +1,5 @@
 # Enviornment Variables:
-# NOTE: Replace 'tempUserName' and 'tempPassword' with your desired username and password
-export username="tempUsername"
+# NOTE: Replace 'tempPassword' with your desired password
 export password="tempPassword"
 
 # Pull PostgreSQL Docker Container

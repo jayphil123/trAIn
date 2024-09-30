@@ -34,5 +34,6 @@ files_for_autograder_io/
 Icon
 .dropbox*
 
-# Passwords/Security (DO NOT REMOVE THIS OTHERWISE PASSWORDS WILL LEAK)
+# Passwords/Security (DO NOT REMOVE THIS OTHERWISE PASSWORDS AND DATA WILL LEAK)
 .env
+data/
