@@ -6,9 +6,6 @@ export password="tempPassword"
 # Pull PostgreSQL Docker Container
 docker pull postgres
 
-# Install PostgreSQL Client (ensure version matches PostgreSQL server)
-sudo apt-get install -y postgresql-client
-
 # Create a directory for persistent data storage
 mkdir -p ./data
 

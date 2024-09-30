@@ -30,11 +30,21 @@ Step 1.) Download Python3.12 or later
 
 - This will be required for all of our api endpoints, including the initial setup for the database
 
-
 Step 2.) Download the required libraries
 
 - Run `pip install -r requirements.txt`
 
-Step 3.) Run postgretest.py
+Step 3.) Create a .env file that contains the following content and modify tempPassword and my_new_databse to whatever values you'd like
+
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=tempPassword
+DB_NAME=my_new_database
+```
+** NOTE MAKE SURE YOU'RE GIT IGNORE CONTAINS `.env` OR YOUR PASSWORD WILL LEAK
+
+Step 4.) Run postgretest.py
 
 - execute `python3 postgre_make_db.py`, and if the output says `Database 'my_new_database' created sucessfully` congrats it worked! 
