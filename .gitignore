@@ -37,3 +37,4 @@ Icon
 # Passwords/Security (DO NOT REMOVE THIS OTHERWISE PASSWORDS AND DATA WILL LEAK)
 .env
 data/
+bin/setup_postgre.sh
