@@ -1,6 +1,8 @@
 # Enviornment Variables:
 # NOTE: Replace 'tempPassword' with your desired password
-export password="tempPassword"
+# *****IMPORTANT*****: Once the script is ran, edit it back before you push otherwise password leak!!!!
+export password="tempPassword" # READ ABOVE BEFORE CHANGING!!!!
+# READ ABOVE BEFORE CHANGING!!!!
 
 # Pull PostgreSQL Docker Container
 docker pull postgres

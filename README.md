@@ -13,6 +13,8 @@ Step 2.) Modify "/bin/setup_postgre.sh"
 
 - Once completed modify the .env file and to your updated username and password
 
+- *IMPORTANT*: After you run, change password back to passwordTemp before committing to repo otherwise PASSWORD LEAK
+
 Step 3.) Run `./bin/setup_postgre.sh`
 
 - This will install the appropriate version of the postgre docker container onto your computer
