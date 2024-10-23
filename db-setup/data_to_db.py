@@ -80,6 +80,8 @@ def main():
             # Execute the INSERT command
             cursor.execute(insert_query, values)
 
+        connection.commit()
+
     except Exception as e:
         print(f"Error {e}")
 
