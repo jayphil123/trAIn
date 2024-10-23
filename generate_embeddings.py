@@ -12,17 +12,18 @@ port = os.getenv("DB_PORT")
 user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 database_name = os.getenv("DB_NAME")
+openai_key = os.getenv("OPENAI_API_KEY")
 
 try:
     # Connect to the specific database
     connection = psycopg2.connect(
-        host=host, 
-        port=port, 
-        user=user, 
-        password=password, 
+        host=host,
+        port=port,
+        user=user,
+        password=password,
         dbname=database_name
     )
-    
+
     # Create a cursor object
     cursor = connection.cursor()
 
@@ -43,15 +44,28 @@ try:
     cursor.execute(select_table_query)
     workouts = cursor.fetchall()
 
+    embeddings_model = OpenAIEmbeddings(
+        openai_api_key=openai_key, model="text-embedding-3-small"
+    )
 
-    embeddings_model = OpenAIEmbeddings()
-    for workout in workouts:
+    for i, workout in enumerate(workouts):
         workout_sentence = f"The {workout[1]} is an {workout[2]} excercise that is of {workout[3]} difficulty."
 
-        embedding = embeddings_model.embed(workout_sentence)
+        print(f"Generating embedding for {i}: {workout[1]}...", end="")
+        embedding = embeddings_model.embed_query(workout_sentence)
+        print("\t\tFinished.")
 
-        cursor.execute("INSERT INTO embeddings VALUES workout_name = ?, embedding = ?", (workout[1], embedding))
+        # Prepare the INSERT command
+        insert_query = (
+            """INSERT INTO embeddings (workout_name, embedding) VALUES (%s, %s)"""
+        )
+        # Values to be inserted
+        values = (workout[1], embedding)
 
+        # Execute the INSERT command
+        cursor.execute(insert_query, values)
+
+    connection.commit()
 
 
 except psycopg2.Error as e:

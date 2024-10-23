@@ -4,7 +4,6 @@ import json
 import psycopg2
 
 
-
 def handle_list_input(value: str):
     """Cleans string to be csv, string, or empty string"""
     # Handles null edgecase
@@ -33,12 +32,10 @@ def main():
     password = os.getenv("DB_PASSWORD")
     database_name = os.getenv("DB_NAME")
 
-
     # Read json file and convert to dictionary
     with open("free-exercise-db.json", "r") as f:
         data = json.load(f)
 
-    
     try:
         # Connect to the specific database
         connection = psycopg2.connect(
@@ -57,7 +54,6 @@ def main():
 
         # for each workout insert into the table (clean each entry)
         for i, workout_list in enumerate(data["rows"]):
-            print(f"{i}: {name}")
 
             name = handle_list_input(workout_list[0])
             force = handle_list_input(workout_list[1])
@@ -71,19 +67,29 @@ def main():
             images = handle_list_input(workout_list[9])
             id_str = handle_list_input(workout_list[10])
 
+            print(f"{i}: {name}")
+
+            # Check if value already in DB and skip
+            select_query = "SELECT * FROM workouts WHERE name = %s"
+            cursor.execute(select_query, (name,))
+            result = cursor.fetchall()
+            if len(result) != 0:
+                print(f"Error Workout Already Exists: {name}")
+                continue
 
             # Format insert query
             insert_query = '''INSERT INTO workouts (name, force, level, mechanic,
                                                     equipment, primary_muscles, secondary_muscles,
                                                     instructions, category, images, id_str
                                                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
-            
+
             # Values to be inserted
             values = (name, force, level, mechanic, equipment, primaryMuscles, secondaryMuscles, instructions, category, images, id_str)
 
-        
             # Execute the INSERT command
             cursor.execute(insert_query, values)
+
+        connection.commit()
 
     except Exception as e:
         print(f"Error {e}")
