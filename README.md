@@ -50,3 +50,9 @@ DB_NAME=my_new_database
 Step 4.) Run postgretest.py
 
 - execute `python3 postgre_make_db.py`, and if the output says `Database 'my_new_database' created sucessfully` congrats it worked! 
+
+Step 5.) Run `data_to_db.py`
+- Populates database with workouts
+
+Step 6.) Check if it worked
+- 
