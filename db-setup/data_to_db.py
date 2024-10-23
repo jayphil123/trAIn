@@ -57,6 +57,8 @@ def main():
 
         # for each workout insert into the table (clean each entry)
         for i, workout_list in enumerate(data["rows"]):
+            print(f"{i}: {name}")
+
             name = handle_list_input(workout_list[0])
             force = handle_list_input(workout_list[1])
             level = handle_list_input(workout_list[2])
@@ -70,14 +72,6 @@ def main():
             id_str = handle_list_input(workout_list[10])
 
 
-            # Check if value already in DB and skip
-            select_query = "SELECT * FROM workouts WHERE name = %s"
-            cursor.execute(select_query, (name,))
-            result = cursor.fetchall()
-            if len(result) != 0:
-                print(f"Error Workout Already Exists: {name}")
-                continue
-          
             # Format insert query
             insert_query = '''INSERT INTO workouts (name, force, level, mechanic,
                                                     equipment, primary_muscles, secondary_muscles,
@@ -90,7 +84,7 @@ def main():
         
             # Execute the INSERT command
             cursor.execute(insert_query, values)
-            connection.commit()
+
     except Exception as e:
         print(f"Error {e}")
 
