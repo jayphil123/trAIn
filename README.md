@@ -1,4 +1,10 @@
-# trAIn
+<p align="center">
+  <img src="resources/logo.png" />
+</p>
+
+## What is trAIn?
+
+trAIn is an innovative mobile app designed to revolutionize personal fitness by leveraging the power of AI to create tailored workout routines. This AI-powered workout planner analyzes user data, such as fitness goals, current physical condition, and past workout performance, to suggest personalized exercise plans that adapt over time. Whether a user is a beginner looking to start a fitness journey or an experienced athlete seeking to enhance their routine, trAIn delivers customized suggestions that cater to individual needs. The app's intelligent algorithms ensure that users are consistently challenged while minimizing the risk of injury, making it an ideal fitness companion for achieving long-term success.
 
 ## Set Up Docker/PostgreSQL
 
@@ -58,8 +64,20 @@ Step 5.) Run postgre_make_db.py
 Step 5.) Run `data_to_db.py`
 - Populates database with workouts
 
-Step 6.) Check if it worked
-- 
+Step 6.) Run `docker exec -it my_postgres /bin/bash`
+- Enters you into a bash terminal of the docker container
+
+Step 7.) Log into your postgres DB with `psql -U postgres`
+
+Step 8.) Run the following commands to find the tables in your database
+
+```
+$ \c <name of your database>
+$ \dt
+```
+
+- Theses commands will first select database and then list all tables in the database
+
 
 ## Project File Hierarchy
 bin/*
