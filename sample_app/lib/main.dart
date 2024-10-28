@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sample_app/login.dart';
+import 'package:train_app/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const SignUp1Widget()),
       );
     });
   }
