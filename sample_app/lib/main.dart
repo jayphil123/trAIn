@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:train_app/login.dart';
+import 'login.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'signup.dart' show SignUp2Widget;
+import 'signup_1.dart' show SignUp2Widget;
+import 'homepage.dart' show HomepageWidget;
 
 class SignUp1Widget extends StatefulWidget {
   const SignUp1Widget({super.key});
@@ -85,7 +86,9 @@ class _SignUp1WidgetState extends State<SignUp1Widget> {
               // Sign In Button
               ElevatedButton(
                 onPressed: () {
-                  // Add your sign-in logic here
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomepageWidget()),
+                  );
                 },
                 child: const Text('Sign In'),
               ),
