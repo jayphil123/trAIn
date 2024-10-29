@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) => const HomepageWidget()),
                   );
                 },
-                child: const Text('Sign In'),
+                child: Text('Sign In'),
               ),
               const SizedBox(height: 12),
               // Sign Up Link
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   "Don't have an account? Sign Up here",
-                  style: TextStyle(color: Theme.of(context).primaryColor),
+                  // style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
               ),
             ],

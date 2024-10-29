@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'theme.dart';
 import 'login.dart';
 import 'login.dart' show LoginPage;
 
@@ -14,9 +15,7 @@ class StartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'trAIn Fitness App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.themeData,
       home: const SplashScreen(),
     );
   }
@@ -43,15 +42,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.fitness_center,
-              size: 100,
-              color: Colors.white,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 70, bottom: 32),
+              child: Image.asset(
+                'assets/images/train-white-logo.png',
+                width: 120,
+                height: 120,
+              ),
             ),
             SizedBox(height: 20),
             Text(
@@ -64,8 +65,8 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 20),
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
+                // valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
           ],
         ),
       ),

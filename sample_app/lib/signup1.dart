@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:train_app/newprofile1.dart';
+import 'newprofile1.dart' show NewProfilePage1;
 
 class SignUpPage1 extends StatefulWidget {
   const SignUpPage1({super.key});
@@ -22,12 +24,10 @@ class _SignUpPage1State extends State<SignUpPage1> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -60,7 +60,7 @@ class _SignUpPage1State extends State<SignUpPage1> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      // color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -68,10 +68,10 @@ class _SignUpPage1State extends State<SignUpPage1> {
                       children: [
                         const Text(
                           'Enter your first name',
-                          style: TextStyle(
-                            fontFamily: 'HelveticaNeue',
-                            fontSize: 16,
-                          ),
+                          // style: TextStyle(
+                          //   fontFamily: 'HelveticaNeue',
+                          //   fontSize: 16,
+                          // ),
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -81,25 +81,29 @@ class _SignUpPage1State extends State<SignUpPage1> {
                                 controller: textController,
                                 decoration: const InputDecoration(
                                   hintText: 'Name',
-                                  hintStyle: TextStyle(
-                                    fontFamily: 'HelveticaNeue',
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
+                                  // hintStyle: TextStyle(
+                                  //   fontFamily: 'HelveticaNeue',
+                                  //   fontSize: 14,
+                                  //   // color: Colors.grey,
+                                  // ),
                                   border: InputBorder.none,
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  // fillColor: Colors.white,
                                 ),
-                                style: const TextStyle(
-                                  fontFamily: 'HelveticaNeue',
-                                  fontSize: 14,
-                                ),
+                                // style: const TextStyle(
+                                //   fontFamily: 'HelveticaNeue',
+                                //   fontSize: 14,
+                                // ),
                               ),
                             ),
                             IconButton(
                               icon: const Icon(Icons.arrow_forward),
                               onPressed: () {
-                                print('Proceed button pressed');
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewProfilePage1()),
+                                );
                               },
                             ),
                           ],
