@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'signup_1.dart' show SignUp2Widget;
+import 'signup1.dart' show SignUpPage1;
 import 'homepage.dart' show HomepageWidget;
 
-class SignUp1Widget extends StatefulWidget {
-  const SignUp1Widget({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<SignUp1Widget> createState() => _SignUp1WidgetState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignUp1WidgetState extends State<SignUp1Widget> {
+class _LoginPageState extends State<LoginPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -86,8 +86,9 @@ class _SignUp1WidgetState extends State<SignUp1Widget> {
               // Sign In Button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const HomepageWidget()),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const HomepageWidget()),
                   );
                 },
                 child: const Text('Sign In'),
@@ -96,9 +97,9 @@ class _SignUp1WidgetState extends State<SignUp1Widget> {
               // Sign Up Link
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(
+                  Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => const SignUp2Widget()),
+                        builder: (context) => const SignUpPage1()),
                   );
                 },
                 child: Text(

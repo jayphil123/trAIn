@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SignUp2Widget extends StatefulWidget {
-  const SignUp2Widget({super.key});
+class SignUpPage1 extends StatefulWidget {
+  const SignUpPage1({super.key});
 
   @override
-  State<SignUp2Widget> createState() => _SignUp2WidgetState();
+  State<SignUpPage1> createState() => _SignUpPage1State();
 }
 
-class _SignUp2WidgetState extends State<SignUp2Widget> {
+class _SignUpPage1State extends State<SignUpPage1> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final textController = TextEditingController();
   bool passwordVisible = false;
@@ -29,7 +29,7 @@ class _SignUp2WidgetState extends State<SignUp2Widget> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
           onPressed: () {
-            // Navigator.pop(context);
+            Navigator.of(context).pop();
           },
         ),
         elevation: 0,
