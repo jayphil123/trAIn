@@ -1,7 +1,7 @@
-name: sample_app
+name: train_app
 description: "Your AI personal trainer"
 
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: "none"
 
 version: 0.0.1+1
 
@@ -14,6 +14,8 @@ dependencies:
 
   english_words: ^4.0.0
   provider: ^6.0.0
+  flutterflow_ui: ^0.2.0
+  google_fonts: ^4.0.3
 
 dev_dependencies:
   flutter_test:
@@ -22,4 +24,11 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
+  assets:
+    - assets/images/
+    - assets/fonts/HelveticaNeueMedium.otf
+  fonts:
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/fonts/HelveticaNeueMedium.otf
   uses-material-design: true
