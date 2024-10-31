@@ -11,6 +11,10 @@ from langchain_openai import ChatOpenAI
 import psycopg2
 from langchain_community.llms import OpenAI
 
+from queue import PriorityQueue
+import numpy as np
+from numpy.linalg import norm
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -21,6 +25,12 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 database_name = os.getenv("DB_NAME")
 openai_key = os.getenv("OPENAI_API_KEY")
+
+def n_nearest_cosine(query, embeddings, n=5):
+   
+    for embedding in embeddings:
+        pq.put(())    
+
 
 try:
     # Connect to the specific database
@@ -36,45 +46,64 @@ try:
     cursor = connection.cursor()
 
     # SQL command to pull embeddings
-    select_table_query = 'SELECT embedding from embeddings'
+    select_table_query = 'SELECT embedding, workout_name from embeddings'
 
     # Execute the create table command
     cursor.execute(select_table_query)
     
     # Process the embeddings
     unprocessed_embeddings = cursor.fetchall()
-    embeddings = []
-    for embedding in unprocessed_embeddings:
-        embeddings.append(embedding[0])
-    
+     
+
+    query = input("INPUT: ")
 
     embeddings_model = OpenAIEmbeddings(
         openai_api_key=openai_key, model="text-embedding-3-small"
     )
+    query_embedding = embeddings_model.embed_query(query)
 
-    llm = ChatOpenAI(model="gpt-3.5-turbo")
+    pq = PriorityQueue()
+    for embedding in unprocessed_embeddings:
+        
+        workout_embedding = embedding[0] 
+        cosine = np.dot(query_embedding, workout_embedding)/(norm(query_embedding)*norm(workout_embedding))
+        workout_name = embedding[1]
+        pq.put((cosine, workout_name))
+
+    
+    for x in range(5):
+        print(pq.get())
+
+    
+
+    # print(embedding[0])
+    # embeddings_model = OpenAIEmbeddings(
+    #     openai_api_key=openai_key, model="text-embedding-3-small"
+    # )
+
+    # llm = ChatOpenAI(model="gpt-3.5-turbo")
 
     
     
-    vectorstore = Chroma(embedding_function=embeddings_model)  # No 'embeddings' argument here
+    # vectorstore = Chroma(embedding_function=embeddings_model)  # No 'embeddings' argument here
 
-    # Add the embeddings to Chroma
-    vectorstore.add(embeddings)
+    # # Add the embeddings to Chroma
+    # vectorstore.add(embeddings)
 
-    retriever = vectorstore.as_retriever()
+    # retriever = vectorstore.as_retriever()
 
-    # Create a retrieval-based QA chain
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",  # Choose the appropriate type for your task
-        retriever=retriever
-    )
+    # # Create a retrieval-based QA chain
+    # qa_chain = RetrievalQA.from_chain_type(
+    #     llm=llm,
+    #     chain_type="stuff",  # Choose the appropriate type for your task
+    #     retriever=retriever
+    # )
 
-    # Run a sample query
-    result = qa_chain.run("I want to exercise my arms for a moderate difficulty workout. What should I do?")
-    print(result)
+    # # Run a sample query
+    # result = qa_chain.run("I want to exercise my arms for a moderate difficulty workout. What should I do?")
+    # print(result)
 
-    # print(rag_chain.invoke("I want to excerise my arms for a moderate difficulty workout what should I do please?"))
+    # # print(rag_chain.invoke("I want to excerise my arms for a moderate difficulty workout what should I do please?"))
 
 
 except psycopg2.Error as e:
