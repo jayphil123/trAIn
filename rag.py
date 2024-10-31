@@ -15,103 +15,73 @@ from queue import PriorityQueue
 import numpy as np
 from numpy.linalg import norm
 
-# Load environment variables from .env file
-load_dotenv()
 
-# Connection parameters from environment variables
-host = os.getenv("DB_HOST")
-port = os.getenv("DB_PORT")
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD")
-database_name = os.getenv("DB_NAME")
-openai_key = os.getenv("OPENAI_API_KEY")
+# General Case (user provides user query, return most similar workouts): 
+# Incomplete - currently only provides a list of context exercises. Needs to query GPT with these exercises as contex
+def rag_workouts(query, count):
 
-def n_nearest_cosine(query, embeddings, n=5):
-   
-    for embedding in embeddings:
-        pq.put(())    
+    # Load environment variables from .env file
+    load_dotenv()
+
+    # Connection parameters from environment variables
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    database_name = os.getenv("DB_NAME")
+    openai_key = os.getenv("OPENAI_API_KEY")
 
 
-try:
-    # Connect to the specific database
-    connection = psycopg2.connect(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        dbname=database_name
-    )
+    try:
+        # Connect to the specific database
+        connection = psycopg2.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            dbname=database_name
+        )
 
-    # Create a cursor object
-    cursor = connection.cursor()
+        # Create a cursor object
+        cursor = connection.cursor()
 
-    # SQL command to pull embeddings
-    select_table_query = 'SELECT embedding, workout_name from embeddings'
+        # SQL command to pull embeddings
+        select_table_query = 'SELECT embedding, workout_name from embeddings'
 
-    # Execute the create table command
-    cursor.execute(select_table_query)
-    
-    # Process the embeddings
-    unprocessed_embeddings = cursor.fetchall()
-     
-
-    query = input("INPUT: ")
-
-    embeddings_model = OpenAIEmbeddings(
-        openai_api_key=openai_key, model="text-embedding-3-small"
-    )
-    query_embedding = embeddings_model.embed_query(query)
-
-    pq = PriorityQueue()
-    for embedding in unprocessed_embeddings:
+        # Execute the create table command
+        cursor.execute(select_table_query)
         
-        workout_embedding = embedding[0] 
-        cosine = np.dot(query_embedding, workout_embedding)/(norm(query_embedding)*norm(workout_embedding))
-        workout_name = embedding[1]
-        pq.put((cosine, workout_name))
+        # Select workout embeddings
+        unprocessed_embeddings = cursor.fetchall()
 
-    
-    for x in range(5):
-        print(pq.get())
+        # GGenerate embedding of user Query 
+        embeddings_model = OpenAIEmbeddings(
+            openai_api_key=openai_key, model="text-embedding-3-small"
+        )
+        query_embedding = embeddings_model.embed_query(query)
 
-    
+        # Push cosine similarity of workout embeddings and the query into PQ
+        pq = PriorityQueue()
+        for embedding in unprocessed_embeddings:
+            
+            workout_embedding = embedding[0] 
+            cosine = -np.dot(query_embedding, workout_embedding)/(norm(query_embedding)*norm(workout_embedding))
+            workout_name = embedding[1]
+            pq.put((cosine, workout_name))
+        
+        # Find the top n workouts similar to query 
+        workouts = []
+        for x in range(count):
+            workouts.append(pq.get()[1])
+        return workouts
+        
 
-    # print(embedding[0])
-    # embeddings_model = OpenAIEmbeddings(
-    #     openai_api_key=openai_key, model="text-embedding-3-small"
-    # )
-
-    # llm = ChatOpenAI(model="gpt-3.5-turbo")
-
-    
-    
-    # vectorstore = Chroma(embedding_function=embeddings_model)  # No 'embeddings' argument here
-
-    # # Add the embeddings to Chroma
-    # vectorstore.add(embeddings)
-
-    # retriever = vectorstore.as_retriever()
-
-    # # Create a retrieval-based QA chain
-    # qa_chain = RetrievalQA.from_chain_type(
-    #     llm=llm,
-    #     chain_type="stuff",  # Choose the appropriate type for your task
-    #     retriever=retriever
-    # )
-
-    # # Run a sample query
-    # result = qa_chain.run("I want to exercise my arms for a moderate difficulty workout. What should I do?")
-    # print(result)
-
-    # # print(rag_chain.invoke("I want to excerise my arms for a moderate difficulty workout what should I do please?"))
-
-
-except psycopg2.Error as e:
-    print(f"Error: {e}")
-finally:
-    # Ensure the cursor and connection are closed properly
-    if cursor:
-        cursor.close()  # Close the cursor first
-    if connection:
-        connection.close()  # Then close the connection
+    except psycopg2.Error as e:
+        print(f"Error: {e}")
+    finally:
+        # Ensure the cursor and connection are closed properly
+        if cursor:
+            cursor.close()  # Close the cursor first
+        if connection:
+            connection.close()  # Then close the connection
 
