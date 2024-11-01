@@ -15,6 +15,8 @@ database_name = os.getenv("DB_NAME")
 openai_key = os.getenv("OPENAI_API_KEY")
 
 def list_to_english(the_list):
+    """Builds list into english."""
+
     sentence = ""
     the_list = the_list.split(",")
     for item in the_list[:-1]:
@@ -26,7 +28,8 @@ def list_to_english(the_list):
     return sentence
 
 def create_exercise(workout):
-     
+    """Creates sentence """
+
     workout_sentence = f"{workout[1]}"
     if workout[2] != None and workout[2] != "":
         workout_sentence += f" is an {workout[9]} exercise for a {workout[2]} day and"    
