@@ -19,7 +19,17 @@ class _HomepageWidgetState extends State<HomepageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          title: Text("Welcome, [USER]"),
+          title: Row(
+            children: [
+              const Text("Welcome, [USER]"),
+              const SizedBox(width: 40), // Space between logo and text
+              Image.asset(
+                'assets/images/train-white-logo.png', // Path to your logo
+                height: 30, // Adjust the height as needed
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
         ),
         body: SafeArea(
           child: WorkoutscheduleWidget(),
