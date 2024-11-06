@@ -96,3 +96,20 @@ def check_existing_username(username: str):
 
     # Return if user information found
     return results == 1
+
+
+def check_valid_cookie(username: str, cookie: str):
+    """Returns True if login exists and False if login does not exist."""
+    
+    # Connect with the database
+    with get_cursor() as cur:  
+
+        # Set up login format  
+        params = (username, cookie)
+
+        # Check if login exists
+        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params) # TODO table name?
+        results = len(cur.fetchall())
+
+    # Return if user information found
+    return results == 1
