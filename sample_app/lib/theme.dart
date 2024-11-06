@@ -48,10 +48,10 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
+          foregroundColor: primaryText,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          textStyle: TextStyle(color: primaryText),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

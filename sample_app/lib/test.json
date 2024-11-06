@@ -1,0 +1,27 @@
+{
+  "workouts": [
+    {
+      "day": "Monday",
+      "workoutType": "Chest and Triceps",
+      "icon": "fitness_center"
+    },
+    {
+      "day": "Tuesday",
+      "workoutType": "Back and Biceps",
+      "icon": "fitness_center"
+    },
+    {
+      "day": "Wednesday",
+      "workoutType": "Legs and Shoulders",
+      "icon": "fitness_center"
+    },
+    { "day": "Thursday", "workoutType": "Rest Day", "icon": "bed" },
+    { "day": "Friday", "workoutType": "Full Body", "icon": "fitness_center" },
+    {
+      "day": "Saturday",
+      "workoutType": "Cardio and Abs",
+      "icon": "directions_run"
+    },
+    { "day": "Sunday", "workoutType": "Rest Day", "icon": "bed" }
+  ]
+}

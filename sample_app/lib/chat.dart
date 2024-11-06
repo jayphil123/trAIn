@@ -17,11 +17,10 @@ class _TrAInChatWidgetState extends State<TrAInChatWidget> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.05),
+          preferredSize:
+              Size.fromHeight(MediaQuery.of(context).size.height * 0.05),
           child: AppBar(
-            backgroundColor: Colors.blueGrey,
             automaticallyImplyLeading: false,
             title: const Text(
               'Chat with trAIn',
