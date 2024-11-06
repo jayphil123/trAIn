@@ -3,6 +3,19 @@ import 'package:flutter/material.dart';
 import 'workout_preview.dart';
 import 'workout.dart'; // Import the Workout model
 import 'sample_workout.dart' show SampleWorkoutWidget;
+import 'package:train_app/theme.dart';
+import 'package:intl/intl.dart';
+
+String getDate() {
+  final DateTime now = DateTime.now();
+  
+  // Calculate the difference to Monday (1) based on the current weekday
+  final int daysToSubtract = now.weekday - DateTime.monday;
+  final DateTime monday = now.subtract(Duration(days: daysToSubtract));
+  
+  final DateFormat formatter = DateFormat('MM/dd/yyyy');
+  return formatter.format(monday);
+}
 
 class WorkoutscheduleWidget extends StatefulWidget {
   const WorkoutscheduleWidget({super.key});
@@ -69,8 +82,8 @@ class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Weekly Training Split - [DATE]',
+              Text(
+                'Weekly Training - ${getDate()}',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
               ),
