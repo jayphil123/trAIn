@@ -1,14 +1,13 @@
 import os
 import psycopg2
 import hashlib
-from typing import cursor
 from dotenv import load_dotenv
 
 # Load enviornment variables
 load_dotenv()
 salt = os.getenv("SALT")
 
-def get_cursor() -> cursor:
+def get_cursor():
     """Returns cursor object."""    
 
     # Get enviornment variable values
@@ -45,9 +44,10 @@ def create_new_login(username: str, password: str):
     
     # Simple validation
     if check_existing_login(username, password):
-        return False
+        return 1
     if check_existing_username(username):
-        return False
+        return 2
+    
 
     # Create new user
     with get_cursor() as cur: 
@@ -56,10 +56,11 @@ def create_new_login(username: str, password: str):
         cur.execute("INSERT INTO users (username, password) VALUES (?, ?) ", params) # TODO table name?
         
     # Double Check it now exists
-    if not check_existing_login(username, password):
-        return False
     if not check_existing_username(username):
-        return False
+        return 3
+    if not check_existing_login(username, password):
+        return 3
+   
     
     return True
 

@@ -1,5 +1,5 @@
 from rag import rag_workouts
-from flask import Flask, request, redirect, url_for, session
+from flask import Flask, request, redirect, url_for, session, Response
 from helper_functions import create_new_login, salt_and_hash_password
 
 
@@ -30,41 +30,34 @@ def index():
     return rag_workouts(query, count)
 
 
-@app.route("/login-page", methods=['GET'])
+@app.route("/login-page", methods=['POST'])
 def login_page():
-    if 'username' in session:
-        return redirect(url_for('show_index')) # TODO: Replace for actual homepage
-    context = {}
-    return render_template("login.html", **context) # TODO: Replace for actual 
+    return
 
 
 
-
-@app.route('/signup-form', methods=['GET', 'POST'])
+@app.route('/signup-form', methods=['POST'])
 def signup():
-    if request.method == 'POST':
-        # Get form data
-        username = request.form.get('username')
-        password = request.form.get('password')
 
-        # Create new user entry
-        create_new_login(username, password)
+    # Get form data
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-        # Set session data
-        session['username'] = username
-        session['cookie-token'] = salt_and_hash_password(password)        
+    # Create new user entry
+    create_new_login(username, password)
+    if create_new_login == 1:
+        return Response("Exact Login already exists", status=200)
+    if create_new_login == 2:
+        return Response("Username already exists", status=200)
+    if create_new_login == 3:
+        return Response("Error Creating Account", status=200)
 
-        # Redirect to home page
-        return redirect(url_for('index'))
-    
-    # Render signup page if GET request
-    return render_template('signup.html')
+    # Set session data
+    session['username'] = username
+    session['cookie-token'] = salt_and_hash_password(password)        
 
-@app.route('/logout-form', methods=['POST'])
-def logout_page():
-    """Get the login page."""
-    session.clear()
-    return redirect(url_for('login_page') or url_for('show_index')) # TODO: Replace both
+    # Returns sucess
+    return Response("Account Created", status=201)
 
 
 if __name__ == "__main__": 
