@@ -101,7 +101,7 @@ def rag_workouts(query, count=5):
 
 
 def generate_weekly_workout(new_msg: str, conversation_history: dict[str, list[str]], workouts: list[str]) -> dict:
-    prompt =  "Your job is to generate a weekly workout routine for a user. Each day should have 2-3 workouts assuming its not a rest day. "
+    prompt =  "Your job is to generate a weekly workout routine for a user. Each day should have BETWEEN 4 TO 5 workouts assuming its not a rest day. "
     prompt += "If you do a rest day the only workout on that day should be \"Rest\" with \"N/A\" as all other fields. "
     prompt += "Keep in mind the any specific muscles, workouts, equipment, or goals they've mentioned.\n"
     prompt += f"\nPrev Convo: {conversation_history}\nLast sent message {new_msg}"
