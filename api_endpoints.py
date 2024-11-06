@@ -1,4 +1,4 @@
-from rag import rag_workouts
+from rag import rag_workouts, handle_conversation
 from flask import Flask, request, redirect, url_for, session, Response
 from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie
 
@@ -6,13 +6,14 @@ from helper_functions import check_existing_login, create_new_login, salt_and_ha
 app = Flask(__name__) 
 
 @app.route("/get_workout")
-def index():
-    # Get args data
-    cookies = request.session
-    username = cookies.get('username')
-    cookie = cookies.get('cookie')
+def get_workouts():
+    # # Get args data
+    # cookies = request.session
+    # username = cookies.get('username')
+    # cookie = cookies.get('cookie')
 
-    status = check_valid_cookie(username, cookie)
+    # status = check_valid_cookie(username, cookie)
+    status = True
     response = { 
         "status": 0,
         "message": "Success",
@@ -35,6 +36,24 @@ def index():
     query = args.get("query")
 
     response["content"] = rag_workouts(query, count)
+    return response
+
+
+@app.route("/send_convo")
+def send_convo():
+    args = request.args
+    if args.get("query") is None:
+        return "Please include a user-query"
+
+    response = {
+        "status": 0,
+        "message": "Success",
+        "content": []
+    }
+
+    # TODO change query to not be placeholder
+    response["content"] = handle_conversation("I want a weekly routine to train my arms.", {})
+
     return response
 
 
@@ -97,7 +116,7 @@ def signup():
     return Response(response, status=201)
 
 @app.route('/logout-form', methods=['POST'])
-def signup():
+def logout():
     response = {
         "status": 0,
         "message": "Success"

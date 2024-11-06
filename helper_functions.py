@@ -39,7 +39,6 @@ def salt_and_hash_password(password: str):
 
     return hashed_password
 
-
 def create_new_login(username: str, password: str):
     
     # Simple validation
@@ -50,7 +49,7 @@ def create_new_login(username: str, password: str):
     
 
     # Create new user
-    with get_cursor() as cur: 
+    with get_cursor() as cur:
         new_pass = salt_and_hash_password(password)
         params = (username, new_pass)
         cur.execute("INSERT INTO users (username, password) VALUES (?, ?) ", params) # TODO table name?

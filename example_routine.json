@@ -1,0 +1,76 @@
+{
+    "content": {
+      "friday": [
+        {
+          "quantity": "7 miles",
+          "time": "1 hour",
+          "workout": "Running, Treadmill"
+        },
+        {
+          "quantity": "N/A",
+          "time": "15 minutes",
+          "workout": "Runner's Stretch"
+        }
+      ],
+      "monday": [
+        {
+          "quantity": "6 miles",
+          "time": "1 hour",
+          "workout": "Running, Treadmill"
+        },
+        {
+          "quantity": "N/A",
+          "time": "15 minutes",
+          "workout": "Runner's Stretch"
+        }
+      ],
+      "saturday": [
+        {
+          "quantity": "N/A",
+          "time": "N/A",
+          "workout": "Rest"
+        }
+      ],
+      "sunday": [
+        {
+          "quantity": "8 miles",
+          "time": "1 hour",
+          "workout": "Running, Treadmill"
+        },
+        {
+          "quantity": "N/A",
+          "time": "15 minutes",
+          "workout": "Runner's Stretch"
+        }
+      ],
+      "thursday": [
+        {
+          "quantity": "N/A",
+          "time": "N/A",
+          "workout": "Rest"
+        }
+      ],
+      "tuesday": [
+        {
+          "quantity": "N/A",
+          "time": "N/A",
+          "workout": "Rest"
+        }
+      ],
+      "wednesday": [
+        {
+          "quantity": "5 miles",
+          "time": "1 hour",
+          "workout": "Running, Treadmill"
+        },
+        {
+          "quantity": "N/A",
+          "time": "15 minutes",
+          "workout": "Runner's Stretch"
+        }
+      ]
+    },
+    "message": "Success",
+    "status": 0
+  }
+  
