@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'newprofile3.dart' show NewProfilePage3;
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 class NewProfilePage2 extends StatefulWidget {
   const NewProfilePage2({super.key});
@@ -81,6 +83,12 @@ class _NewProfilePage2State extends State<NewProfilePage2> {
                           child: IconButton(
                             icon: const Icon(Icons.arrow_forward),
                             onPressed: () {
+                              // Add the fitness goals and frequency to the provider class
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                  .updateGoals(selectedFitnessGoals);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                  .updateFrequency(selectedFrequency);
+
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) =>

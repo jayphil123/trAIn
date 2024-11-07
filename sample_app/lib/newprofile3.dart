@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'homepage.dart' show HomepageWidget;
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
+import 'user_data/talk.dart';
+
 
 class NewProfilePage3 extends StatefulWidget {
   const NewProfilePage3({super.key});
@@ -86,6 +90,13 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
                             onPressed: () {
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateWorkoutPlans(goalDescriptionController.text);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateIntensity(selectedIntensityLevels);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateTimeframe(selectedTimeframes);
+                              sendFormDataToServer(context);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) =>
