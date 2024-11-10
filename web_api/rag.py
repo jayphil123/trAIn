@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from queue import PriorityQueue
 from numpy.linalg import norm
-
+from helper_functions import get_workout_info
 
 # Query ChatGPT
 def get_chatgpt_response(prompt):
@@ -111,9 +111,47 @@ def generate_weekly_workout(new_msg: str, conversation_history: dict[str, list[s
     prompt += f"THE ONLY WORKOUTS YOU CAN ADD ARE (THESE MUST BE VERBATIM): {workouts}"
 
     response = get_chatgpt_response(prompt)
+    """
+    Format:
+    {
+        "Friday": [{quantity: "", time: "", workout: "name"},{}]
+    }
+
+    
+    """
     try:
         response = json.loads(response)
-        print(response)
+        workout_info = get_workout_info(workouts)
+        """
+        Format:
+        {
+            "workoutname":{
+                ""
+        
+        
+            }
+        
+        }
+        """ 
+        for day, routine in response.items():
+            print(f"day: {day}")
+            for i, workout in enumerate(routine):
+                name_of_workout = workout["workout"]
+                print(f"\tworkout: {name_of_workout}")
+                if name_of_workout == "Rest":
+                    continue
+                info = workout_info[name_of_workout]
+                response[day][i].update(info)
+        
+        days_of_the_week = ["friday","saturday","sunday","monday","tuesday","wednesday","thursday"]
+        included_days = list(response.keys())
+        
+        for day in days_of_the_week:
+            day = day.lower()
+            if day not in included_days:
+               print(f"rest_day added: {day}")
+               response[day] = [{"workout":"Rest", "time": "N/A", "quantity": "N/A"}] 
+        
         return response
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -167,6 +205,7 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             return new_weekly_workout(new_msg, conversation_history)
         if response["option"] == "Replace the Current Workout":
             print("Replace the Current Workout")
+
         if response["option"] == "General Question About Exercise":
             print("General Question About Exercise")
     except:

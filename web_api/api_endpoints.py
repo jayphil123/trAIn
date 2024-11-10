@@ -45,6 +45,8 @@ def send_convo():
     if args.get("query") is None:
         return "Please include a user-query"
 
+    query = args.get("query")
+
     response = {
         "status": 0,
         "message": "Success",
@@ -52,7 +54,7 @@ def send_convo():
     }
 
     # TODO change query to not be placeholder
-    response["content"] = handle_conversation("I want a weekly routine to train my arms.", {})
+    response["content"] = handle_conversation(query, {})
 
     return response
 

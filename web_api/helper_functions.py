@@ -96,7 +96,6 @@ def check_existing_username(username: str):
     # Return if user information found
     return results == 1
 
-
 def check_valid_cookie(username: str, cookie: str):
     """Returns True if login exists and False if login does not exist."""
     
@@ -112,3 +111,34 @@ def check_valid_cookie(username: str, cookie: str):
 
     # Return if user information found
     return results == 1
+
+def get_workout_info(workouts: list[str]) -> dict:
+    workout_info = {}
+    with get_cursor() as cur:
+        for workout in workouts:
+            workout_info[workout] = {}
+                
+            sql_query = "SELECT * FROM workouts WHERE name = %s"
+            cur.execute(sql_query, (workout,))
+
+            results = cur.fetchall()
+            if len(results) != 1:
+                continue
+            
+            results = results[0]
+
+            # Store the results in the dictionary
+            info = {}
+            info["id"] = results[0]
+            info["force"] = results[2]
+            info["level"] = results[3]
+            info["mechanic"] = results[4]
+            info["equipment"] = results[5]
+            info["primary_muscles"] = results[6]
+            info["secondary_muscles"] = results[7]
+            info["instructions"] = results[8]
+            info["category"] = results[9]
+            info["images"] = results[10]
+            info["id_str"] = results[11]
+            workout_info[workout] = info
+    return workout_info
