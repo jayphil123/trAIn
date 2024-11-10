@@ -33,7 +33,7 @@ def main():
     database_name = os.getenv("DB_NAME")
 
     # Read json file and convert to dictionary
-    with open("free-exercise-db.json", "r") as f:
+    with open("db-setup/free-exercise-db.json", "r") as f:
         data = json.load(f)
 
     try:
@@ -48,7 +48,7 @@ def main():
         cursor = connection.cursor()
 
         # Read schema file for workout db
-        with open("workouts_shema.sql", "r") as f:
+        with open("db-setup/workouts_shema.sql", "r") as f:
             table_query = f.read()
             cursor.execute(table_query)
 

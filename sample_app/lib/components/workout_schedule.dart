@@ -1,6 +1,21 @@
-import 'sample_workout.dart';
+import 'dart:convert'; // For JSON decoding
 import 'package:flutter/material.dart';
+import 'workout_preview.dart';
+import 'workout.dart'; // Import the Workout model
+import 'sample_workout.dart' show SampleWorkoutWidget;
+import 'package:train_app/theme.dart';
+import 'package:intl/intl.dart';
 
+String getDate() {
+  final DateTime now = DateTime.now();
+  
+  // Calculate the difference to Monday (1) based on the current weekday
+  final int daysToSubtract = now.weekday - DateTime.monday;
+  final DateTime monday = now.subtract(Duration(days: daysToSubtract));
+  
+  final DateFormat formatter = DateFormat('MM/dd/yyyy');
+  return formatter.format(monday);
+}
 
 class WorkoutscheduleWidget extends StatefulWidget {
   const WorkoutscheduleWidget({super.key});
@@ -11,350 +26,106 @@ class WorkoutscheduleWidget extends StatefulWidget {
 
 class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void setState(VoidCallback callback) {
-    super.setState(callback);
-  }
+  List<Workout> workouts = []; // Store parsed workouts
 
   @override
   void initState() {
     super.initState();
+    _loadWorkouts();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  // Simulate loading workouts from JSON data
+  Future<void> _loadWorkouts() async {
+    const jsonData = '''
+      {
+        "workouts": [
+          { "day": "Monday", "workoutType": "Upper Body Strength", "icon": "fitness_center" },
+          { "day": "Tuesday", "workoutType": "Lower Body Strength", "icon": "fitness_center" },
+          { "day": "Wednesday", "workoutType": "Yoga and Mobility", "icon": "self_improvement" },
+          { "day": "Thursday", "workoutType": "Push Day (Chest, Shoulders)", "icon": "fitness_center" },
+          { "day": "Friday", "workoutType": "Pull Day (Back, Biceps)", "icon": "fitness_center" },
+          { "day": "Saturday", "workoutType": "Full Body HIIT", "icon": "directions_run" },
+          { "day": "Sunday", "workoutType": "Active Recovery (Cardio, Stretching)", "icon": "bed" }
+        ]
+
+      }
+    ''';
+
+    // Decode JSON data and parse into Workout objects
+    final data = json.decode(jsonData) as Map<String, dynamic>;
+    final workoutsList = data['workouts'] as List;
+    setState(() {
+      workouts = workoutsList.map((json) => Workout.fromJson(json)).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+      padding: const EdgeInsets.all(16),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
               blurRadius: 4,
-              color: Color(0x33000000),
-              offset: Offset(
-                0,
-                2,
-              ),
+              color: const Color(0x33000000),
+              offset: const Offset(0, 2),
               spreadRadius: 0,
             )
           ],
           borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Weekly Training Split - [DATE]',
+                'Weekly Training - ${getDate()}',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
               ),
-              ListView(
+              ListView.builder(
                 padding: EdgeInsets.zero,
                 primary: false,
                 shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: [
-                  Builder(
-                    builder: (context) => Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (dialogContext) {
-                              return Dialog(
-                                elevation: 0,
-                                insetPadding: EdgeInsets.zero,
-                                backgroundColor: Colors.transparent,
-                                alignment: AlignmentDirectional(0, 0)
-                                    .resolve(Directionality.of(context)),
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  child: SampleWorkoutWidget(),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                          'Monday',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                        ),
-                                    Text(
-                                          'Chest and Triceps',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                        ),
-                                  ],
-                                ),
-                                Icon(
-                                  Icons.fitness_center,
-                                  size: 24,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Tuesday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Back and Biceps',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.fitness_center,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Wednesday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Legs and Shoulders',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.fitness_center,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Thursday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Rest Day',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.bed,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Friday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Full Body',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.fitness_center,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Saturday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Cardio and Abs',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.directions_run,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                      'Sunday',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                                Text(
-                                      'Rest Day',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                                    ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.bed,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                itemCount: workouts.length,
+                itemBuilder: (context, index) {
+                  final workout = workouts[index];
+                  return WorkoutPreview(
+                    day: workout.day,
+                    workoutType: workout.workoutType,
+                    icon: workout.icon,
+                    onTap: () {
+                      _showWorkoutDetails(context);
+                    },
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _showWorkoutDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment: Alignment.center,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: const SampleWorkoutWidget(),
+          ),
+        );
+      },
     );
   }
 }

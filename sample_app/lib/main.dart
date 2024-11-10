@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'login.dart';
 import 'login.dart' show LoginPage;
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 void main() {
-  runApp(const StartPage());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => FormDataProvider(),
+      child: const StartPage(),
+    ),
+  );
 }
 
 class StartPage extends StatelessWidget {

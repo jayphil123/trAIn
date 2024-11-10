@@ -8,7 +8,6 @@ class AIChatWidget extends StatefulWidget {
 }
 
 class _AIChatWidgetState extends State<AIChatWidget> {
-
   @override
   void initState() {
     super.initState();
@@ -28,11 +27,11 @@ class _AIChatWidgetState extends State<AIChatWidget> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-            color: Colors.white,
+            // color: Colors.white,
             boxShadow: const [
               BoxShadow(
                 blurRadius: 4,
-                color: Color(0x33000000),
+                // color: Color(0x33000000),
                 offset: Offset(0, 2),
               ),
             ],
@@ -58,7 +57,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         width: 1,
-                        color: Colors.grey,
+                        // color: Colors.grey,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -70,7 +69,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    // fillColor: Colors.grey[200],
                   ),
                   maxLines: 20,
                   minLines: 3,

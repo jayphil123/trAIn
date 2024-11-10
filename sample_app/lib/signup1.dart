@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:train_app/newprofile1.dart';
 import 'newprofile1.dart' show NewProfilePage1;
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 class SignUpPage1 extends StatefulWidget {
   const SignUpPage1({super.key});
@@ -99,6 +101,9 @@ class _SignUpPage1State extends State<SignUpPage1> {
                             IconButton(
                               icon: const Icon(Icons.arrow_forward),
                               onPressed: () {
+                                // Save the input to the provider
+                                Provider.of<FormDataProvider>(context, listen: false)
+                                    .updateName(textController.text);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (context) =>

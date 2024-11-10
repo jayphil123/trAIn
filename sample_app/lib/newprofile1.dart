@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'newprofile2.dart' show NewProfilePage2;
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 class NewProfilePage1 extends StatefulWidget {
   const NewProfilePage1({Key? key}) : super(key: key);
@@ -103,6 +105,14 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
                           child: IconButton(
                             icon: const Icon(Icons.arrow_forward),
                             onPressed: () {
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateHeight(textController1.text);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateWeight(textController2.text);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateGender(textController3.text);
+                              Provider.of<FormDataProvider>(context, listen: false)
+                                .updateAge(textController4.text);
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) =>
