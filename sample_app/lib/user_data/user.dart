@@ -1,5 +1,7 @@
 class User {
-  final String name;
+  final String username,
+  final String password,
+  final String full_name;
   final String gender;
   final double height; // in centimeters
   final double weight; // in kilograms
@@ -7,7 +9,7 @@ class User {
   final WorkoutSplit workoutSplit;
 
   User({
-    required this.name,
+    required this.full_name,
     required this.gender,
     required this.height,
     required this.weight,
@@ -17,7 +19,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(name: $name, gender: $gender, height: $height cm, weight: $weight kg, profilePictureUrl: $profilePictureUrl, workoutSplit: $workoutSplit)';
+    return 'User(name: $full_name, gender: $gender, height: $height cm, weight: $weight kg, profilePictureUrl: $profilePictureUrl, workoutSplit: $workoutSplit)';
   }
 }
 
