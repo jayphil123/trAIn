@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FormData {
+  String username;
+  String password;
   String name;
   String height;
   String weight;
@@ -13,6 +15,8 @@ class FormData {
   String workoutPlans;
 
   FormData({
+    this.username = '',
+    this.password = '',
     this.name = '',
     this.height = '',
     this.weight = '',
