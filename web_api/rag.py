@@ -103,7 +103,7 @@ def rag_workouts(query, count=5):
 def generate_weekly_workout(new_msg: str, conversation_history: dict[str, list[str]], workouts: list[str]) -> dict:
     prompt =  "Your job is to generate a weekly workout routine for a user. Each day should have BETWEEN 4 TO 5 workouts assuming its not a rest day. "
     prompt += "If you do a rest day the only workout on that day should be \"Rest\" with \"N/A\" as all other fields. "
-    prompt += "Keep in mind the any specific muscles, workouts, equipment, or goals they've mentioned.\n"
+    prompt += "Keep in mind any specific muscles, workouts, equipment, or goals they've mentioned.\n"
     prompt += f"\nPrev Convo: {conversation_history}\nLast sent message {new_msg}"
     prompt += "Please respond in the following format with: "
     prompt += "{\"monday\":[{\"workout\":\"<name>\", \"time\": \"<how long it should take>\", \"quantity\":\"<units appropriate reps/sets, how many miles, etc.>\"}, ...],...}\n"
@@ -160,8 +160,10 @@ def generate_weekly_workout(new_msg: str, conversation_history: dict[str, list[s
 def new_weekly_workout(new_msg: str, conversation_history: dict[str, list[str]]) -> dict:
     prompt =  "Your job is to generate keywords for a balanced workout routine for a user. "
     prompt += "Given the chat conversation generate a few keywords to provide to a RAG model "
-    prompt += "to find appropriate keywords in the model. "
-    prompt += "These key words should include specific muscles, workouts, equipment, or goals.\n"
+    prompt += "to find appropriate keywords in the model. These keywords should be specfic. "
+    prompt += "These key words should include specific muscles, workouts, equipment, or goals "
+    prompt += "included in the conversation and message.\n"
+    prompt += "These words should not be general like \"workout\" or \"fitness\", instead \"arms\" or \"legs\""
     prompt += "Please respond in the following format with 5 keywords: "
     prompt += "{\"keywords\": [\"<key word 1>\",\"<key word 2>\",...]}\n"
     prompt += "\n\n\n"
@@ -171,7 +173,7 @@ def new_weekly_workout(new_msg: str, conversation_history: dict[str, list[str]])
     response = get_chatgpt_response(prompt)
     try:
         response = json.loads(response)
-        print(f"reponse: {response}")
+        # print(f"reponse: {response}")
         keywords = response["keywords"]
         print(f"keywords: {keywords}")
         workouts = set()
@@ -179,7 +181,7 @@ def new_weekly_workout(new_msg: str, conversation_history: dict[str, list[str]])
         for word in keywords:
             for workout in rag_workouts(word):
                 workouts.add(workout)
-
+        print(workouts)
         return generate_weekly_workout(new_msg, conversation_history, workouts)
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
