@@ -54,7 +54,7 @@ def send_convo():
     }
 
     # TODO change query to not be placeholder
-    response["content"] = handle_conversation(query, {})
+    response["content"], response["status"] = handle_conversation(query, {})
 
     return response
 
