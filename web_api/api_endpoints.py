@@ -54,7 +54,7 @@ def send_convo():
         "content": []
     }
 
-    # TODO change query to not be placeholder
+    # TODO change query to not be placeholder, add convo history dict[str -> list(str)]
     response["content"], response["status"] = handle_conversation(query, {})
 
     return response

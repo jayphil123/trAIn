@@ -1,0 +1,61 @@
+{
+    "content": [
+      [
+        {
+          "DELETE": "User does not want leg workouts (Good Morning works on hamstrings)",
+          "workout": "Good Morning"
+        },
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Isometric Wipers"
+        }
+      ],
+      [
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Standing Bradford Press"
+        }
+      ],
+      [
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Moving Claw Series"
+        },
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Isometric Wipers"
+        }
+      ],
+      [
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Single-Arm Linear Jammer"
+        }
+      ],
+      [
+        {
+          "DELETE": "User does not want leg workouts (Good Morning works on hamstrings)",
+          "workout": "Good Morning"
+        },
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Isometric Wipers"
+        }
+      ],
+      [
+        {
+          "KEEP": "User did not specify to remove arm workouts.",
+          "workout": "Standing Bradford Press"
+        }
+      ],
+      [
+        {
+          "KEEP": "User did not specify to remove rest days.",
+          "workout": "Rest"
+        }
+      ]
+    ],
+    "message": "Success",
+    "status": 2
+  }
+  

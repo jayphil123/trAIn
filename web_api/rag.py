@@ -223,34 +223,8 @@ def new_weekly_workout_endpoint(new_msg: str, conversation_history: dict[str, li
 ### REPLACE INDIVIDUAL WORKOUT GENERATION FUNCTIONS
 
 
-
-# def identify_workout_to_be_changed(new_msg: str, conversation_history: dict[str: list[str]], existing_workout: dict[str: str]):
-#     """Finds specific workout to remove based on conversation."""
-
-#     prompt =  "Your job is to VERIFY if a workout should be removed based on chat history. Unless specified by the chat history \"KEEP\" rest days. "
-#     prompt += "Given the Chat History and the Workout's Info let me know if this workout should be removed. \n"
-#     prompt += "The message and chat history was not specified for this individual workout, rather was a general comment about the entire routine."
-#     prompt += "You are only provided an individual workout from the routine, if it is not related or applicable to the message or prompt ALWAYS KEEP IT."
-#     prompt += "BE FAIRLY GENEROUS WITH WHAT YOU KEEP, ONLY DELETE IF ABSOLUTELY SURE THEY DONT WANT IT"
-#     prompt += "The format you respond it should be as one of the following:\n"
-#     prompt += "{\"KEEP\": \"Reason to be kept\"}"
-#     prompt += "{\"DELETE\": \"Reason to be deleted\"}}\n"
-#     prompt += "\n\n\n"
-#     prompt += f"The chat history is: {str(conversation_history)}\n"
-#     prompt += f"The newest message is from the user is: {str(new_msg)}"
-#     prompt += f"This is the existing workout you are verifying: {existing_workout}"
-
-#     response = get_chatgpt_response(prompt)
-
-#     try:
-#         response = json.loads(response) # Converts str -> dict
-#         print(response)
-#         return response
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         return {}
-
-def do_all_workouts(new_msg: str, conversation_history: dict[str: list[str]], existing_workout: dict[str: str]):
+def approve_workouts(new_msg: str, conversation_history: dict[str: list[str]], existing_workout: dict[str: str]):
+    """Generates a status for each workout to verify if user wants them."""
 
     prompt =  "Your job is to VERIFY if workouts should be removed or replaced based on chat history. Unless specified by the chat history \"KEEP\" rest days. "
     prompt += "Given the Chat History and the Workout's Info let me know if any workout should be removed or replaced. \n"
@@ -274,7 +248,8 @@ def do_all_workouts(new_msg: str, conversation_history: dict[str: list[str]], ex
         print(f"Error: {e}")
         return {}
 
-def replace_workout(new_msg: str, conversation_history: dict[str: list[str]], workout_to_be_removed: dict[str: str], reason: str) -> dict[str: str]:
+def generate_replacement_workout(new_msg: str, conversation_history: dict[str: list[str]], workout_to_be_removed: dict[str: str], reason: str) -> dict[str: str]:
+    """Suggests replacement workouts for current plan, also returns info for each workout."""
 
     keywords = generate_weekly_workout_keywords(reason, workout_to_be_removed)
     workouts = set()
@@ -306,54 +281,36 @@ def replace_workout(new_msg: str, conversation_history: dict[str: list[str]], wo
 
 
 def handle_remove_or_replace(new_msg: str, conversation_history: dict[str: list[str]], existing_workout: dict[str: str], keep_or_delete: dict[str: str]):
-    prompt =  "Your job is to VERIFY if workouts should be removed based on chat history. Unless specified by the chat history \"KEEP\" rest days. "
-    prompt += "Given the Chat History and the Workout's Info let me know if any workout should be removed. \n"
-    prompt += "You are provided the entire routine, if it is not related or applicable to the message or prompt ALWAYS KEEP IT."
-    prompt += "BE FAIRLY GENEROUS WITH WHAT YOU KEEP, ONLY DELETE IF ABSOLUTELY SURE THEY DONT WANT IT."
-    prompt += "The format you respond it should be as follows:\n"
-    prompt += "{\"day of the week\": [{\"workout\": \"name\", \"KEEP\": \"Reason to be kept\"}, {\"workout\": \"name\", \"DELETE\": \"Reason to be deleted\"}}]\n"
-    prompt += "\n\n\n"
-    prompt += f"The chat history is: {str(conversation_history)}\n"
-    prompt += f"The newest message is from the user is: {str(new_msg)}"
-    prompt += f"This is the existing workout you are verifying: {existing_workout}"
-    prompt += "Do not hallucinate or change any of the names of the workouts"
-    response = get_chatgpt_response(prompt)
+    """Generates new workout plan taking in necessary context for the old workouts and why they should be kept or deleted."""
 
     days = existing_workout.keys()
+    new_workout = {}
 
     for day in days:
+        new_workout[day] = []
         print(day)
         for i, workout in enumerate(keep_or_delete[day][0]):
-            print(keep_or_delete)
-            print(keep_or_delete[day]) # [[{'workout': 'Good Morning', 'REPLACE': 'User wants to replace leg workouts with arm workouts.'}, {'workout': 'Isometric Wipers', 'KEEP': 'This workout does not involve legs and focuses on arms and upper body.'}]]
-
-            status = list(workout.keys())[0]
-            reasoning = list(workout.values())[0]
+            status = list(workout.keys())[1]
+            reasoning = list(workout.values())[1]
             if status == "DELETE":
                 print(f"\tDELETING {workout["workout"]}")
-                existing_workout[day].pop(i)
+                # TODO if this was the only workout change to rest day?
             elif status == "REPLACE":
                 print(f"\tREPLACING {workout["workout"]}")
                 removed_workout = existing_workout[day][i]
-                existing_workout[day].pop(i)
-                possible_replacements, workout_info = replace_workout(new_msg, conversation_history, removed_workout, workout[status])
+                possible_replacements, workout_info = generate_replacement_workout(new_msg, conversation_history, removed_workout, workout[status])
                 for rank, info in possible_replacements.items():
                     if info["workout"] == removed_workout["workout"]:
                         continue
-                    existing_workout[day].append(workout_info[info["workout"]])
+                    new_workout[day].append(workout_info[info["workout"]])
                     break
 
             else:
+                new_workout[day].append(existing_workout[day][i])
                 print(f"\tKEEPING {workout["workout"]}")
 
+    return new_workout
 
-    try:
-        response = json.loads(response) # Converts str -> dict
-        print(response)
-        return list(response.values())
-    except Exception as e:
-        print(f"Error: {e}")
-        return {}
 
 
 def replace_workout_endpoint(new_msg: str, conversation_history: dict[str, list[str]], existing_workout_routine: dict[str: list[dict: str]]) -> dict:
@@ -365,10 +322,17 @@ def replace_workout_endpoint(new_msg: str, conversation_history: dict[str, list[
     # Classify each workout as being KEPT or DELETED
     keep_or_delete = {}
     for day in existing_workout_routine:
-        # print(do_all_workouts(new_msg, conversation_history, existing_workout_routine[day]))
-        keep_or_delete[day] = do_all_workouts(new_msg, conversation_history, {day: existing_workout_routine[day]})
+        keep_or_delete[day] = approve_workouts(new_msg, conversation_history, {day: existing_workout_routine[day]})
+
+    print("OLD:")
+    for day, val in existing_workout_routine.items():
+        print(day)
+        for workout in val:
+            print(f"\t{workout["workout"]}")
 
 
+
+    print("STATUS:")
     for day, val in keep_or_delete.items():
         print(day)
         for workout in val:
@@ -377,24 +341,14 @@ def replace_workout_endpoint(new_msg: str, conversation_history: dict[str, list[
 
     new_workout = handle_remove_or_replace(new_msg, conversation_history, existing_workout_routine, keep_or_delete)
 
-    # keep_or_delete = {}
-    # for day, routine in existing_workout_routine.items():
-    #     keep_or_delete[day] = {}
-    #     for workout in routine:
-    #         keep_or_delete[day][workout["workout"]] = identify_workout_to_be_changed(new_msg, conversation_history, workout)
 
-    # If workout is DELETE, generate replacement
-    # for day, routine in existing_workout_routine.items():
-    #     for workout in routine:
-    #         name_of_workout = workout["workout"]
-    #         if "DELETE" in keep_or_delete[day][name_of_workout]:
-    #             reason_to_remove = keep_or_delete[day][name_of_workout]["DELETE"]
-    #             new_workout = generate_replacement(new_msg, conversation_history, workout, reason_to_remove) # TODO
-    #             if new_workout["workout"] == "Removed":
-    #                 continue
+    print("NEW:")
+    for day, val in new_workout.items():
+        print(day)
+        for workout in val:
+            print(f"\t{workout["workout"]}")
 
 
-    print(new_workout)
 
     return new_workout
 
@@ -426,7 +380,6 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             workout_routine = {}
             with open("web_api/example_routine.json", "r") as f:
                 workout_routine = json.load(f)
-            print(workout_routine)
             fixed_plan = replace_workout_endpoint(new_msg, conversation_history, workout_routine)
             return fixed_plan, 2
         if response["option"] == "General Question About Exercise":

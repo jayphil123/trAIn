@@ -96,7 +96,7 @@ def check_existing_username(username: str):
     return (results == 1)
 
 def add_user_stats(user_info: dict):
-    """Attatch user statistics to user_info["username"], in users database."""
+    """Attach user statistics to user_info["username"], in users database."""
     if not check_existing_username(user_info["username"]):
         # If username doesn't exist, return error status
         return 1
