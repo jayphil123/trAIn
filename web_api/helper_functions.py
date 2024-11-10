@@ -8,7 +8,7 @@ load_dotenv()
 salt = os.getenv("SALT")
 
 def get_cursor():
-    """Returns cursor object."""    
+    """Returns cursor object."""
 
     # Get enviornment variable values
     host = os.getenv("DB_HOST")
@@ -16,7 +16,7 @@ def get_cursor():
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
     database_name = os.getenv("DB_NAME")
-    
+
     # Connects to database
     connection = psycopg2.connect(
         host=host,
@@ -37,72 +37,92 @@ def salt_and_hash_password(password: str):
     hash_obj.update(salted_password.encode('utf-8'))
     hashed_password = hash_obj.hexdigest()
 
-    return hashed_password
+    return "$".join([algorithm, salt, hashed_password])
 
 def create_new_login(username: str, password: str):
-    
+
     # Simple validation
     if check_existing_login(username, password):
         return 1
     if check_existing_username(username):
         return 2
-    
+
 
     # Create new user
     with get_cursor() as cur:
         new_pass = salt_and_hash_password(password)
         params = (username, new_pass)
-        cur.execute("INSERT INTO users (username, password) VALUES (?, ?) ", params) # TODO table name?
-        
+        cur.execute("INSERT INTO users (username, password) VALUES (?, ?) ", params)
+
     # Double Check it now exists
     if not check_existing_username(username):
         return 3
     if not check_existing_login(username, password):
         return 3
-   
-    
-    return True
+
+    return 0  # A successful response
 
 def check_existing_login(username: str, password: str):
     """Returns True if login exists and False if login does not exist."""
-    
-    # Connect with the database
-    with get_cursor() as cur:  
 
-        # Set up login format  
+    # Connect with the database
+    with get_cursor() as cur:
+
+        # Set up login format
         new_pass = salt_and_hash_password(password)
         params = (username, new_pass)
+
+        # Check if login exists
+        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params)
+        results = len(cur.fetchall())
+
+    # Return if user information found
+    return (results == 1)
+
+def check_existing_username(username: str):
+    """Returns True if username exists and False if username does not exist."""
+
+    # Connect with the database
+    with get_cursor() as cur:
+
+        # Set up username params
+        params = (username,)
+
+        # Check if login exists
+        cur.execute("SELECT * FROM users WHERE username = ?", params)
+        results = len(cur.fetchall())
+
+    # Return if user information found
+    return (results == 1)
+
+def add_user_stats(user_info: dict):
+    """Attatch user statistics to user_info["username"], in users database."""
+    if not check_existing_username(user_info["username"]):
+        # If username doesn't exist, return error status
+        return 1
+
+    # Connect with the database
+    with get_cursor() as cur:
+
+        # Set up login format
+        params = (username, cookie)
 
         # Check if login exists
         cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params) # TODO table name?
         results = len(cur.fetchall())
 
-    # Return if user information found
-    return results == 1
+    # Return positive status
+    return 0
 
-def check_existing_username(username: str):
-    """Returns True if username exists and False if username does not exist."""
-    
-    # Connect with the database
-    with get_cursor() as cur:  
 
-        # Set up username params  
-        params = (username,)
-
-        # Check if login exists
-        cur.execute("SELECT * FROM users WHERE username = ?", params) # TODO table name?
-        results = len(cur.fetchall())
-
-    # Return if user information found
-    return results == 1
 
 def check_valid_cookie(username: str, cookie: str):
     """Returns True if login exists and False if login does not exist."""
-    
-    # Connect with the database
-    with get_cursor() as cur:  
 
-        # Set up login format  
+    # Connect with the database
+    with get_cursor() as cur:
+
+        # Set up login format
         params = (username, cookie)
 
         # Check if login exists
@@ -117,14 +137,14 @@ def get_workout_info(workouts: list[str]) -> dict:
     with get_cursor() as cur:
         for workout in workouts:
             workout_info[workout] = {}
-                
+
             sql_query = "SELECT * FROM workouts WHERE name = %s"
             cur.execute(sql_query, (workout,))
 
             results = cur.fetchall()
             if len(results) != 1:
                 continue
-            
+
             results = results[0]
 
             # Store the results in the dictionary

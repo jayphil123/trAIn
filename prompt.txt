@@ -1,8 +1,8 @@
 Your job is to generate a weekly workout routine for a user. Each day should have BETWEEN 4 TO 5 workouts assuming its not a rest day. If you do a rest day the only workout on that day should be "Rest" with "N/A" as all other fields. Keep in mind any specific muscles, workouts, equipment, or goals they've mentioned.
 
-Prev Convo: {}
-Last sent message "Generate workout routine for the week if i was training for a marathon"Please respond in the following format with: {"monday":[{"workout":"<name>", "time": "<how long it should take>", "quantity":"<units appropriate reps/sets, how many miles, etc.>"}, ...],...}
+Previous Conversation: {}
+Last sent message: "Generate me a weekly workout for leg day"Please respond in the following format with: {"monday":[{"workout":"<name>", "time": "<how long it should take>", "quantity":"<units appropriate reps/sets, how many miles, etc.>"}, ...],...}
 DO NOT ADD ANY WORKOUT NOT IN THE LIST
 DO NOT ADD EXTRA FIELDS INTO THE RESPONSE BEYOND DAY OF WEEK, WORKOUT, TIME TAKEN, QUANTITY (ie reps/sets, how many miles, etc.)
-THE ONLY WORKOUTS YOU CAN ADD ARE (THESE MUST BE VERBATIM): {'Walking, Treadmill', 'Moving Claw Series', 'Side Bridge', 'Prowler Sprint', 'Atlas Stone Trainer', 'Jogging, Treadmill', 'Stiff-Legged Barbell Deadlift', 'Downward Facing Balance', 'Trail Running/Walking', 'Step Mill', 'Balance Board', 'Leg Lift', 'Chest Stretch on Stability Ball', 'Standing Soleus And Achilles Stretch', "Runner's Stretch", 'Stiff Leg Barbell Good Morning', 'Standing Leg Curl', 'Running, Treadmill', 'Single-Leg Leg Extension'}
+THE ONLY WORKOUTS YOU CAN ADD ARE (THESE MUST BE VERBATIM): {'Hanging Leg Raise', 'Bodyweight Walking Lunge', 'Seated Floor Hamstring Stretch', 'Seated Hamstring', 'Chair Leg Extended Stretch', 'Lying Prone Quadriceps', 'Barbell Walking Lunge', 'Leg Extensions', 'Sit Squats', 'Quadriceps-SMR', '90/90 Hamstring', 'Narrow Stance Hack Squats', 'Lunge Sprint', 'Hamstring Stretch', 'Box Squat', 'On Your Side Quad Stretch', 'Dumbbell Lunges', 'Stiff Leg Barbell Good Morning', 'Chair Squat', 'Hack Squat', 'Crossover Reverse Lunge', 'All Fours Quad Stretch', 'Lying Hamstring', 'Leg Lift', 'Standing Elevated Quad Stretch'}
 REMINDER ALL WORKOUTS MUST BE IN THAT LIST ABOVE AS VERBATIM NAMES, DO NOT HALLUCINATE

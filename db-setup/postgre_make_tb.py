@@ -15,13 +15,13 @@ database_name = os.getenv("DB_NAME")
 try:
     # Connect to the specific database
     connection = psycopg2.connect(
-        host=host, 
-        port=port, 
-        user=user, 
-        password=password, 
+        host=host,
+        port=port,
+        user=user,
+        password=password,
         dbname=database_name
     )
-    
+
     # Create a cursor object
     cursor = connection.cursor()
 
@@ -30,6 +30,7 @@ try:
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL,
+        password VARCHAR(256) NOT NULL,
         email VARCHAR(100) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
@@ -60,7 +61,7 @@ try:
 
     # Commit the changes
     connection.commit()
-    
+
 except psycopg2.Error as e:
     print(f"Error: {e}")
 finally:

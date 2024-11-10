@@ -1,0 +1,70 @@
+{
+    "friday": [
+      [
+        {
+          "DELETE": "User does not want leg workouts.",
+          "workout": "Good Morning"
+        },
+        {
+          "KEEP": "Arm workout keeps the user engaged in muscle training.",
+          "workout": "Isometric Wipers"
+        }
+      ]
+    ],
+    "monday": [
+      [
+        {
+          "DELETE": "User does not want to do leg days.",
+          "workout": "Good Morning"
+        },
+        {
+          "KEEP": "Arm workout that does not involve legs.",
+          "workout": "Isometric Wipers"
+        }
+      ]
+    ],
+    "saturday": [
+      [
+        {
+          "KEEP": "User did not indicate to remove this workout and it targets different muscle groups than legs.",
+          "workout": "Standing Bradford Press"
+        }
+      ]
+    ],
+    "sunday": [
+      [
+        {
+          "KEEP": "User did not specify any desire to change rest days.",
+          "workout": "Rest"
+        }
+      ]
+    ],
+    "thursday": [
+      [
+        {
+          "KEEP": "The user did not specify any workouts to keep or replace beyond leg days. This workout targets shoulders and does not fall under leg exercises.",
+          "workout": "Single-Arm Linear Jammer"
+        }
+      ]
+    ],
+    "tuesday": [
+      [
+        {
+          "DELETE": "User requested to replace leg workouts with arm workouts, indicating they do not want leg-related workouts.",
+          "workout": "Standing Bradford Press"
+        }
+      ]
+    ],
+    "wednesday": [
+      [
+        {
+          "DELETE": "User does not want leg workouts.",
+          "workout": "Moving Claw Series"
+        },
+        {
+          "KEEP": "This is an arm workout and can continue in the routine.",
+          "workout": "Isometric Wipers"
+        }
+      ]
+    ]
+  }
