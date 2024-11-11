@@ -4,22 +4,40 @@ import 'newprofile1.dart' show NewProfilePage1;
 import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
 
-class SignUpPage1 extends StatefulWidget {
-  const SignUpPage1({super.key});
-
-  @override
-  State<SignUpPage1> createState() => _SignUpPage1State();
-}
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class _SignUpPage1State extends State<SignUpPage1> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final textController = TextEditingController();
+
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool passwordVisible = false;
 
   @override
   void dispose() {
     textController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  // Function to call when the user presses the "Next" button
+  Future<void> _onSubmit() async {
+    // Get values from text controllers
+    final firstName = _firstNameController.text;
+    final lastName = _lastNameController.text;
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    // Call the function to send data to the backend
+    await sendSignUpDataToBackend(context, firstName, lastName, username, password);
   }
 
   @override
@@ -43,73 +61,45 @@ class _SignUpPage1State extends State<SignUpPage1> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title Text
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 22),
-                  child: Text(
-                    'Begin your workout journey with us!',
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontFamily: 'HelveticaNeue',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                // Input Field for First Name
+                // Full Name
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      // color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Enter your first name',
-                          // style: TextStyle(
-                          //   fontFamily: 'HelveticaNeue',
-                          //   fontSize: 16,
-                          // ),
-                        ),
-                        const SizedBox(height: 8),
+                        Text('Enter your full name'),
+                        SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
                               child: TextFormField(
-                                controller: textController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Name',
-                                  // hintStyle: TextStyle(
-                                  //   fontFamily: 'HelveticaNeue',
-                                  //   fontSize: 14,
-                                  //   // color: Colors.grey,
-                                  // ),
+                                controller: _firstNameController,
+                                decoration: InputDecoration(
+                                  hintText: 'First Name',
                                   border: InputBorder.none,
                                   filled: true,
-                                  // fillColor: Colors.white,
                                 ),
-                                // style: const TextStyle(
-                                //   fontFamily: 'HelveticaNeue',
-                                //   fontSize: 14,
-                                // ),
                               ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: () {
-                                // Save the input to the provider
-                                Provider.of<FormDataProvider>(context, listen: false)
-                                    .updateName(textController.text);
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewProfilePage1()),
-                                );
-                              },
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _lastNameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Last Name',
+                                  border: InputBorder.none,
+                                  filled: true,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -117,7 +107,94 @@ class _SignUpPage1State extends State<SignUpPage1> {
                     ),
                   ),
                 ),
+
+                // Username
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Create a username'),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _usernameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Username',
+                                  border: InputBorder.none,
+                                  filled: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Password
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Create a password'),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _passwordController,
+                                obscureText: !passwordVisible, // Toggle password visibility
+                                decoration: InputDecoration(
+                                  hintText: 'Password',
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        passwordVisible = !passwordVisible;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Next Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: ElevatedButton(
+                    onPressed: _onSubmit, // Call the _onSubmit function here
+                    child: const Text('Next'),
+                  ),
+                ),
                 const SizedBox(height: 20),
+
                 // Logo Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),

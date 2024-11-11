@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
 
 void main() {
+  await dotenv.load(); // load env file
   runApp(
     ChangeNotifierProvider(
       create: (_) => FormDataProvider(),
