@@ -31,20 +31,23 @@ Future<void> sendFormDataToServer(BuildContext context) async {
     final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
 
     // Create the payload to send
-    final payload = {
-      'height': formData.height,
-      'weight': formData.weight,
-      'gender': formData.gender,
-      'age': formData.age,
-      'goals': formData.goals,
-      'frequency': formData.frequency,
-      'intensity': formData.intensity,
-      'timeframe': formData.timeframe,
-      'workoutPlans': formData.workoutPlans,
-    };
+    String goals = formData.goals.join(" ");
+    String frequency = formData.frequency.join(" ");
+    String intensity = formData.intensity.join(" ");
+    String timeframe = formData.timeframe.join(" ");
+    String plans = formData.workoutPlans;
+    String newPayload = "My goals for training are to $goals, I want to work out $frequency, ";
+    newPayload += "I want an intensity level of $intensity and I plan to workout for $timeframe. ";
+    newPayload += "Here is some more information about my workout goals: $plans.";
 
-    print(payload);
+    print(newPayload);
 
+    // // Define the URL of your server
+    final url = Uri.parse('http://localhost:5000/send_convo?query=$newPayload'); // Replace with your server URL
+
+    // Send the HTTP POST request
+    final response = await http.get(url);
+    print(json.decode(response.body));
 
   } catch (e) {
     // Handle errors

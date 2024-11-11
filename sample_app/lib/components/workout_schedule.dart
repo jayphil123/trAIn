@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'workout_preview.dart';
 import 'workout.dart'; // Import the Workout model
 import 'sample_workout.dart' show SampleWorkoutWidget;
-import 'package:train_app/theme.dart';
 import 'package:intl/intl.dart';
 
 String getDate() {
