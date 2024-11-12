@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:train_app/newprofile1.dart';
 import 'newprofile1.dart' show NewProfilePage1;
-import 'package:provider/provider.dart';
-import 'user_data/signup_info.dart';
+import 'user_data/talk.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+class SignUpPage1 extends StatefulWidget {
+  const SignUpPage1({super.key});
+
+  @override
+  State<SignUpPage1> createState() => _SignUpPage1State();
+}
 
 class _SignUpPage1State extends State<SignUpPage1> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -189,7 +192,14 @@ class _SignUpPage1State extends State<SignUpPage1> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: ElevatedButton(
-                    onPressed: _onSubmit, // Call the _onSubmit function here
+                    onPressed: () {
+                      _onSubmit; // Call the _onSubmit function here
+                      Navigator.of(context).push( // Go to the next page
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const NewProfilePage1()),
+                      );
+                    },
                     child: const Text('Next'),
                   ),
                 ),

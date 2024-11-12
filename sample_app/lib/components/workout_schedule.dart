@@ -4,6 +4,16 @@ import 'workout_preview.dart';
 import 'workout.dart'; // Import the Workout model
 import 'sample_workout.dart' show SampleWorkoutWidget;
 import 'package:intl/intl.dart';
+import '../user_data/signup_info.dart';
+import 'package:provider/provider.dart';
+
+String iconChooser(String listOfWorkouts) {
+  if (listOfWorkouts == "Rest") {
+    return "bed";
+  } else {
+    return "fitness_center";
+  }
+}
 
 String getDate() {
   final DateTime now = DateTime.now();
@@ -35,16 +45,25 @@ class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
 
   // Simulate loading workouts from JSON data
   Future<void> _loadWorkouts() async {
-    const jsonData = '''
+    final workoutClass = Provider.of<WorkoutSplitProvider>(context, listen: false).workoutSplit;
+    // Grab the primary muscles from the workout split
+    String mondaysMuscles = workoutClass.mondayMuscles;
+    String tuesdaysMuscles = workoutClass.tuesdayMuscles;
+    String wednesdaysMuscles = workoutClass.wednesdayMuscles;
+    String thursdaysMuscles = workoutClass.thursdayMuscles;
+    String fridaysMuscles = workoutClass.fridayMuscles;
+    String saturdaysMuscles = workoutClass.saturdayMuscles;
+    String sundaysMuscles = workoutClass.sundayMuscles;
+    String jsonData = '''
       {
         "workouts": [
-          { "day": "Monday", "workoutType": "Upper Body Strength", "icon": "fitness_center" },
-          { "day": "Tuesday", "workoutType": "Lower Body Strength", "icon": "fitness_center" },
-          { "day": "Wednesday", "workoutType": "Yoga and Mobility", "icon": "self_improvement" },
-          { "day": "Thursday", "workoutType": "Push Day (Chest, Shoulders)", "icon": "fitness_center" },
-          { "day": "Friday", "workoutType": "Pull Day (Back, Biceps)", "icon": "fitness_center" },
-          { "day": "Saturday", "workoutType": "Full Body HIIT", "icon": "directions_run" },
-          { "day": "Sunday", "workoutType": "Active Recovery (Cardio, Stretching)", "icon": "bed" }
+          { "day": "Monday", "workoutType": "$mondaysMuscles", "icon": "${iconChooser(mondaysMuscles)}" },
+          { "day": "Tuesday", "workoutType": "$tuesdaysMuscles", "icon": "${iconChooser(tuesdaysMuscles)}" },
+          { "day": "Wednesday", "workoutType": "$wednesdaysMuscles", "icon": "${iconChooser(wednesdaysMuscles)}" },
+          { "day": "Thursday", "workoutType": "$thursdaysMuscles", "icon": "${iconChooser(thursdaysMuscles)}" },
+          { "day": "Friday", "workoutType": "$fridaysMuscles", "icon": "${iconChooser(fridaysMuscles)}" },
+          { "day": "Saturday", "workoutType": "$saturdaysMuscles", "icon": "${iconChooser(saturdaysMuscles)}" },
+          { "day": "Sunday", "workoutType": "$sundaysMuscles", "icon": "${iconChooser(sundaysMuscles)}" }
         ]
 
       }

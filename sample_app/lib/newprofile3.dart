@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart' show HomepageWidget;
 import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
-import 'user_data/talk.dart';
+import 'signup_load.dart';
 
 
 class NewProfilePage3 extends StatefulWidget {
@@ -96,11 +95,10 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                                 .updateIntensity(selectedIntensityLevels);
                               Provider.of<FormDataProvider>(context, listen: false)
                                 .updateTimeframe(selectedTimeframes);
-                              sendFormDataToServer(context);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const HomepageWidget()),
+                                        const SplashScreen()),
                               );
                             },
                             style: ElevatedButton.styleFrom(
