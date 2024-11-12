@@ -11,7 +11,7 @@ Future<void> getWorkout(String query, int count) async {
   final url = dotenv.get('AWS_API_URL');
 
   try {
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       // Success! Parse the response if it returns JSON.
@@ -47,7 +47,25 @@ Future<void> sendFormDataToServer(BuildContext context) async {
 
     // Send the HTTP POST request
     final response = await http.get(url);
-    print(json.decode(response.body));
+    // print(json.decode(response.body));
+
+    Map<String, dynamic> responseMap = json.decode(response.body);
+    List<Map<String, dynamic>> mondayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['monday']);
+    List<Map<String, dynamic>> tuesdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['tuesday']);
+    List<Map<String, dynamic>> wednesdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['wednesday']);
+    List<Map<String, dynamic>> thursdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['thursday']);
+    List<Map<String, dynamic>> fridayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['friday']);
+    List<Map<String, dynamic>> saturdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['saturday']);
+    List<Map<String, dynamic>> sundayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['sunday']);
+
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateMonday(mondayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateTuesday(tuesdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateWednesday(wednesdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateThursday(thursdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateFriday(fridayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSaturday(saturdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSunday(sundayWorkouts);
+
 
   } catch (e) {
     // Handle errors
@@ -58,30 +76,32 @@ Future<void> sendFormDataToServer(BuildContext context) async {
 Future<void> sendSignUpDataToBackend(BuildContext context, String firstName, String lastName, String username, String password) async {
   try {
     final payload = {
-      'full_name': full_name,
+      'full_name': "$firstName $lastName",
       'username': username,
       'password': password,
     };
 
     print(payload); 
 
+    // Commented this out for now since it doesn't work
+
     // Define the URL of your AWS instance endpoint
     // final url = Uri.parse('http://localhost:5000/get_workout?query=$query&count=$count');
-    final url = dotenv.get('AWS_API_URL');
+    // // final url = dotenv.get('AWS_API_URL');
 
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(payload), // convert payload to json
-    );
+    // final response = await http.post(
+    //   Uri.parse(url),
+    //   headers: {'Content-Type': 'application/json'},
+    //   body: json.encode(payload), // convert payload to json
+    // );
 
-    if (response.statusCode == 200) {
-      print('Data sent successfully!');
-    } else {
-      // error
-      print('Failed to send data. Status Code: ${response.statusCode}');
-    }
+    // if (response.statusCode == 200) {
+    //   print('Data sent successfully!');
+    // } else {
+    //   // error
+    //   print('Failed to send data. Status Code: ${response.statusCode}');
+    // }
   } catch (e) {
     //  errors
     print('Error occurred: $e');

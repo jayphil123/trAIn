@@ -30,6 +30,7 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/HelveticaNeueMedium.otf
+    - .env
   fonts:
     - family: HelveticaNeue
       fonts:

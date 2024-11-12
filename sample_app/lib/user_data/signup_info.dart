@@ -1,4 +1,35 @@
 import 'package:flutter/material.dart';
+import 'user.dart';
+
+String formatMuscleGroups(List<Map<String, dynamic>> data) { 
+  // Step 1: Extract primary_muscles into a Set
+  Set<String> uniquePrimaryMuscles = {};
+  for (var workout in data) {
+    if (workout.containsKey('primary_muscles')) {
+      // Capitalize the first letter of the muscle group
+      String muscleGroup = workout['primary_muscles'];
+      String capitalizedMuscleGroup = muscleGroup[0].toUpperCase() + muscleGroup.substring(1);
+      uniquePrimaryMuscles.add(capitalizedMuscleGroup);
+    }
+  }
+
+  // Step 2: Convert the Set to a List
+  List<String> list = uniquePrimaryMuscles.toList();
+
+  // Step 3: Format the List into a string
+  if (list.isEmpty) {
+    return 'Rest'; // Handle the empty case
+  } else if (list.length == 1) {
+    return list.first; // Single element case
+  } else if (list.length == 2) {
+    return '${list[0]} and ${list[1]}'; // Two elements case
+  } else {
+    // More than two elements case
+    String allButLast = list.sublist(0, list.length - 1).join(', ');
+    return '$allButLast, and ${list.last}';
+  }
+}
+
 
 class FormData {
   String username;
@@ -82,6 +113,54 @@ class FormDataProvider with ChangeNotifier {
 
   void updateWorkoutPlans(String data) {
     _formData.workoutPlans = data;
+    notifyListeners();
+  }
+}
+
+class WorkoutSplitProvider with ChangeNotifier {
+  WorkoutSplit _workoutSplit = WorkoutSplit();
+
+  WorkoutSplit get workoutSplit => _workoutSplit;
+
+  void updateMonday(List<Map<String, dynamic>> data) {
+    _workoutSplit.monday = data;
+  _workoutSplit.mondayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateTuesday(List<Map<String, dynamic>> data) {
+    _workoutSplit.tuesday = data;
+  _workoutSplit.tuesdayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateWednesday(List<Map<String, dynamic>> data) {
+    _workoutSplit.wednesday = data;
+  _workoutSplit.wednesdayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateThursday(List<Map<String, dynamic>> data) {
+    _workoutSplit.thursday = data;
+  _workoutSplit.thursdayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateFriday(List<Map<String, dynamic>> data) {
+    _workoutSplit.friday = data;
+  _workoutSplit.fridayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateSaturday(List<Map<String, dynamic>> data) {
+    _workoutSplit.saturday = data;
+  _workoutSplit.saturdayMuscles = formatMuscleGroups(data);
+    notifyListeners();
+  }
+
+  void updateSunday(List<Map<String, dynamic>> data) {
+    _workoutSplit.sunday = data;
+  _workoutSplit.sundayMuscles = formatMuscleGroups(data);
     notifyListeners();
   }
 }

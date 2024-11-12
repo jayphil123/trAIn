@@ -1,37 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'theme.dart';
-import 'login.dart';
-import 'login.dart' show LoginPage;
-import 'package:provider/provider.dart';
-import 'user_data/signup_info.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'user_data/talk.dart';
+import 'homepage.dart';
 
-void main() async {
-  await dotenv.load(fileName: '.env'); // load env file
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => FormDataProvider()),
-        ChangeNotifierProvider(create: (_) => WorkoutSplitProvider()),
-        // Add more providers here if needed
-      ],
-      child: const StartPage(),
-    ),
+Future<void> _initializePage(context) async {
+  await sendFormDataToServer(context);
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(builder: (context) => const HomepageWidget()),
   );
-}
-
-class StartPage extends StatelessWidget {
-  const StartPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'trAIn Fitness App',
-      theme: AppTheme.themeData,
-      home: const SplashScreen(),
-    );
-  }
 }
 
 class SplashScreen extends StatefulWidget {
@@ -45,11 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    });
+    _initializePage(context);
   }
 
   @override
@@ -69,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              'Welcome to trAIn',
+              'Loading your AI workout',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
