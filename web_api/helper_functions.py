@@ -40,6 +40,7 @@ def salt_and_hash_password(password: str):
     return "$".join([algorithm, salt, hashed_password])
 
 def create_new_login(username: str, password: str):
+    """Creates a new login user."""
 
     # Simple validation
     if check_existing_login(username, password):
@@ -108,12 +109,11 @@ def add_user_stats(user_info: dict):
         params = (username, cookie)
 
         # Check if login exists
-        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params) # TODO table name?
+        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params)
         results = len(cur.fetchall())
 
     # Return positive status
     return 0
-
 
 
 def check_valid_cookie(username: str, cookie: str):
@@ -126,13 +126,14 @@ def check_valid_cookie(username: str, cookie: str):
         params = (username, cookie)
 
         # Check if login exists
-        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params) # TODO table name?
+        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params)
         results = len(cur.fetchall())
 
     # Return if user information found
     return results == 1
 
 def get_workout_info(workouts: list[str]) -> dict:
+    """Retrieves all context about a list of workouts."""
     workout_info = {}
     with get_cursor() as cur:
         for workout in workouts:
