@@ -31,7 +31,15 @@ try:
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL,
         password VARCHAR(256) NOT NULL,
-        email VARCHAR(100) NOT NULL,
+        height VARCHAR(50) NOT NULL,
+        weight VARCHAR(50) NOT NULL,
+        gender VARCHAR(50) NOT NULL,
+        age VARCHAR(50) NOT NULL,
+        goals TEXT[],
+        frequency TEXT[],
+        intensity TEXT[],
+        timeframe TEXT[],
+        workoutPlans VARCHAR(256),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     '''
@@ -40,22 +48,17 @@ try:
     cursor.execute(create_table_query)
 
     # Prepare the INSERT command
-    insert_query = '''INSERT INTO users (username, email) VALUES (%s, %s);'''
+    #insert_query = '''INSERT INTO users (username, email) VALUES (%s, %s);'''
     # Values to be inserted
-    values = ('your_username', 'your_email@example.com')  # replace with actual values
-
+    #values = ('your_username', 'your_email@example.com')  # replace with actual values
     # Execute the INSERT command
-    cursor.execute(insert_query, values)
+    #cursor.execute(insert_query, values)
 
     # Execute the SELECT query
-    cursor.execute("SELECT * FROM users;")
+    #cursor.execute("SELECT * FROM users;")
 
     # Fetch all rows
-    rows = cursor.fetchall()
-
-    # Print the results
-    for row in rows:
-        print(row)
+    #rows = cursor.fetchall()
 
     print("Table 'users' created successfully and data inserted.")
 

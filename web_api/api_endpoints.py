@@ -1,6 +1,6 @@
 from rag import rag_workouts, handle_conversation
 from flask import Flask, request, redirect, url_for, session, Response
-from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats
+from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats, get_user_info
 
 
 app = Flask(__name__)
@@ -59,99 +59,58 @@ def send_convo():
 
     return response
 
-# ********** Route for saving initial user information **********
-@app.route("/save-user-info", methods=['POST'])
-def save_user_info():
-    response = {
-        "status": 0,
-        "message": "Success"
-    }
-
-    # Save args data into user_info dict
-    user_info = {}
-    args = request.args
-    user_info["username"] = args.get('username')
-    user_info["height"]  = args.get('height')
-    user_info["weight"] = args.get('weight')
-    user_info["gender"] = args.get('gender')
-    user_info["age"] = args.get('age')
-    user_info["goals"] = args.get('goals')
-    user_info["frequency"] = args.get('frequency')
-    user_info["intensity"] = args.get('intensity')
-    user_info["timeframe"] = args.get('timeframe')
-    user_info["workoutPlans"] = args.get('workoutPlans')
-
-    status = add_user_stats(user_info)
-
-    if status == 1:
-        response = {
-            "status": 1,
-            "message": "Failure"
-        }
-        return Response(response, 400)
-
-    return Response(response, 200)
-
 # ********** All login / logout endpoints below **********
 
 # Form: /login-form?username=<username>&password=<password>
-@app.route("/login-form", methods=['POST'])
+@app.route("/login_form", methods=['POST'])
 def login_page():
     # Get args data
     args = request.args
     username = args.get('username')
     password = args.get('password')
 
-    status = check_existing_login(username, password)
+    if not check_existing_login(username, password):
+        return Response({"status": 1, "message": "Failed login"}, 400)
+
+
+    user_info = get_user_info(username)
+
     response = {
         "status": 0,
-        "message": "Success"
+        "message": "Success",
+        "user_info": user_info
     }
 
-    if status == True:
-        # Set session data
-        session['username'] = username
+    # Set session data
+    session['username'] = username
 
-        return Response(response, status=200)
-
-    response["status"] = 1
-    response["message"] = "failed login"
-    return Response(response, status=400)
+    return Response(response, status=200)
 
 
-@app.route('/signup-form', methods=['POST'])
+@app.route('/signup_form', methods=['POST'])
 def signup():
-    # Get args data
-    args = request.session
-    username = args.get('username')
-    password = args.get('password')
+    # Save attatched json data into user_info dict
+    user_info = request.get_json()
 
     # Create new user entry
-    status = create_new_login(username, password)
+    status = add_user_stats(user_info)
 
     response = {
         "status": status,
         "message": "Success"
     }
 
-    # Check error messages
-    if status == 1:
+    if status != 0:
         response["message"] = "Exact Login already exists"
-        return Response(response, status=400)
-    if status == 2:
-        response["message"] = "Username already exists"
-        return Response(response, status=400)
-    if status == 3:
-        response["message"] = "Error Creating Account"
         return Response(response, status=400)
 
     # Set session data
-    session['username'] = username
+    session['username'] = user_info["username"]
 
     # Returns success
     return Response(response, status=201)  # "status" = 0 on success
 
-@app.route('/logout-form', methods=['POST'])
+@app.route('/logout_form', methods=['POST'])
 def logout():
     response = {
         "status": 0,
