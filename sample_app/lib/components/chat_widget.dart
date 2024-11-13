@@ -7,94 +7,110 @@ class AIChatWidget extends StatefulWidget {
   State<AIChatWidget> createState() => _AIChatWidgetState();
 }
 
+class Message {
+  final String text;
+  final bool isUser;
+
+  Message(this.text, this.isUser);
+}
+
 class _AIChatWidgetState extends State<AIChatWidget> {
-  @override
-  void initState() {
-    super.initState();
+  final List<String> _messages = [];
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  // Method to add a new message
+  void _sendMessage() {
+    if (_controller.text.isNotEmpty) {
+      final userMessage = _controller.text;
+      setState(() {
+        _messages.add(_controller.text);
+      });
+      _controller.clear();
+      _scrollToBottom();
+
+      // Simulate a response with a delay
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        setState(() {
+          _messages.add("AI Response: $userMessage");
+        });
+        _scrollToBottom();
+      });
+    }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  // Automatically scroll to the bottom when a new message is added
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 50),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: AlignmentDirectional(0, 0),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            // color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                blurRadius: 4,
-                // color: Color(0x33000000),
-                offset: Offset(0, 2),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(12),
+    // Access the theme colors
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final backgroundColor = Theme.of(context).colorScheme.surface;
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white;
+    final inputBackgroundColor =
+        Theme.of(context).colorScheme.surfaceContainerHighest;
+
+    return Scaffold(
+      body: Column(
+        children: [
+          // Scrollable list of chat messages
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 12.0),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      _messages[index],
+                      style: TextStyle(color: textColor),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+          // Fixed text input field at the bottom
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            color: inputBackgroundColor,
+            child: Row(
               children: [
-                const Text(
-                  'AI Workout Assistant',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: "Type your message...",
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (value) => _sendMessage(),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  autofocus: false,
-                  textInputAction: TextInputAction.done,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    hintText: "Ask for AI suggestions or recommendations",
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1,
-                        // color: Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Colors.blue,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    filled: true,
-                    // fillColor: Colors.grey[200],
-                  ),
-                  maxLines: 20,
-                  minLines: 3,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    print('Button pressed ...');
-                  },
-                  icon: const Icon(
-                    Icons.fitness_center,
-                    size: 15,
-                  ),
-                  label: const Text('Get AI Suggestions'),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: _sendMessage,
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
