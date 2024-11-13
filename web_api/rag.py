@@ -418,8 +418,8 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             return fixed_plan, 2
         if response["option"] == "General Question About Exercise":
             print("General Question About Exercise")
-            general_response(new_msg, conversation_history)
-            return {}, 3
+            response = general_response(new_msg, conversation_history)
+            return response, 3
     except Exception as e:
         print(e)
         return {"Error": "Error"}, 4
