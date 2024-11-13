@@ -10,7 +10,9 @@ from numpy.linalg import norm
 from helper_functions import get_workout_info
 
 # Query ChatGPT
-def get_chatgpt_response(prompt):
+def get_chatgpt_response(prompt: str) -> str:
+    """Calls ChatGPT api giving the prompt and returning the response"""
+    
     load_dotenv()
 
     try:
@@ -69,7 +71,7 @@ def rag_workouts(query, count=5):
         # Select workout embeddings
         unprocessed_embeddings = cursor.fetchall()
 
-        # GGenerate embedding of user Query
+        # Generate embedding of user Query
         embeddings_model = OpenAIEmbeddings(
             openai_api_key=openai_key, model="text-embedding-3-small"
         )
@@ -289,6 +291,8 @@ def generate_replacement_workout(new_msg: str, conversation_history: dict[str: l
 
 
 def get_time_and_quantity(new_msg: str, conversation_history: dict[str: list[str]], workout: dict[str: str]):
+    """Generates a time and quantity for a workout given everything else about the workout."""
+
     prompt =  "Generate an appropriate {\"time\": \"<how long it should take>\", \"quantity\":\"<units appropriate reps/sets, how many miles, etc.>\"} "
     prompt += f"for the {workout["workout"]} workout given the following stats {workout}\n\n"
     prompt += f"The following is the chat history for context {conversation_history}"
@@ -367,7 +371,6 @@ def replace_workout_endpoint(new_msg: str, conversation_history: dict[str, list[
             print(f"\t{workout["workout"]}")
 
 
-
     print("STATUS:")
     for day, val in keep_or_delete.items():
         print(day)
@@ -377,11 +380,16 @@ def replace_workout_endpoint(new_msg: str, conversation_history: dict[str, list[
 
     new_workout = handle_remove_or_replace(new_msg, conversation_history, existing_workout_routine, keep_or_delete)
 
-
+    for day in new_workout.keys():
+        if len(new_workout[day]) == 0:
+            print(f"rest_day added: {day}")
+            new_workout[day] = [{"workout":"Rest", "time": "N/A", "quantity": "N/A"}]
 
     return new_workout
 
-def general_response(new_msg: str, conversation_history: dict[str, list[str]]):
+def general_response(new_msg: str, conversation_history: dict[str, list[str]]) -> str:
+    """Returns ChatGPT's answer for a general query."""
+
     prompt =  f"Given this chat history {conversation_history}. "
     prompt += f"Answer the following prompt {new_msg}."
     prompt += "ALL RESPONSES MUST BE ABOUT WORKING OUT OR FITNESS. ELSE APOLOGIZE AND ASK FOR A FITNESS RELATED QUESTION."
@@ -390,6 +398,7 @@ def general_response(new_msg: str, conversation_history: dict[str, list[str]]):
 
 
 def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]) -> dict:
+    """Sorts the newest message into one of three categories and handles appropriately to send proper response."""
 
     prompt =  "Your job is to determine which category of messages a message is classified into. "
     prompt += "Your options are 'New Weekly Workout Routine', 'Replace a Workout/They Don't Like a Workout', 'General Question About Exercise'.\n"
@@ -412,8 +421,8 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
         if response["option"] == "Replace a Workout/They Don't Like a Workout":
             print("Replace the Current Workout")
             workout_routine = {}
-            with open("web_api/example_routine.json", "r") as f:
-                workout_routine = json.load(f)
+            with open("web_api/examples/example_generate_workout.json", "r") as f:
+                workout_routine = json.load(f)["content"]
             fixed_plan = replace_workout_endpoint(new_msg, conversation_history, workout_routine)
             return fixed_plan, 2
         if response["option"] == "General Question About Exercise":
@@ -422,5 +431,5 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             return response, 3
     except Exception as e:
         print(e)
-        return {"Error": "Error"}, 4
+        return "Error", 4
 
