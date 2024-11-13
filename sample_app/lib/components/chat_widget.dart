@@ -15,7 +15,7 @@ class Message {
 }
 
 class _AIChatWidgetState extends State<AIChatWidget> {
-  final List<String> _messages = [];
+  final List<Message> _messages = [];
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -24,7 +24,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     if (_controller.text.isNotEmpty) {
       final userMessage = _controller.text;
       setState(() {
-        _messages.add(_controller.text);
+        _messages.add(Message(userMessage, true));
       });
       _controller.clear();
       _scrollToBottom();
@@ -32,7 +32,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       // Simulate a response with a delay
       Future.delayed(const Duration(milliseconds: 1000), () {
         setState(() {
-          _messages.add("AI Response: $userMessage");
+          _messages.add(Message("Ai: $userMessage", false));
         });
         _scrollToBottom();
       });
@@ -78,7 +78,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Text(
-                      _messages[index],
+                      "${_messages[index].isUser}",
                       style: TextStyle(color: textColor),
                     ),
                   ),
