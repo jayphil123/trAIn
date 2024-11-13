@@ -7,7 +7,9 @@ app = Flask(__name__)
 
 @app.route("/get_workout")
 def get_workouts():
-    # Get args data
+    """Handles Get workouts endpoint."""
+
+    # Handles cookies
     cookies = request.session
     username = cookies.get('username')
     cookie = cookies.get('cookie')
@@ -42,6 +44,9 @@ def get_workouts():
 
 @app.route("/send_convo")
 def send_convo():
+    """Handles all chat messages."""
+
+    # Veirfy Cookies 
     cookies = request.session
     username = cookies.get('username')
     cookie = cookies.get('cookie')
@@ -59,7 +64,7 @@ def send_convo():
         response["message"] = "Not valid user"
         return response
 
-
+    # Handles query
     args = request.args
     if args.get("query") is None:
         return "Please include a user-query"
@@ -82,6 +87,8 @@ def send_convo():
 # Form: /login-form?username=<username>&password=<password>
 @app.route("/login_form", methods=['POST'])
 def login_page():
+    """Logins user and creates a cookie."""
+
     # Get args data
     args = request.args
     username = args.get('username')
@@ -107,6 +114,8 @@ def login_page():
 
 @app.route('/signup_form', methods=['POST'])
 def signup():
+    """Creates a new user and makes a cookie."""
+
     # Save attatched json data into user_info dict
     user_info = request.get_json()
 
@@ -127,6 +136,8 @@ def signup():
 
 @app.route('/logout_form', methods=['POST'])
 def logout():
+    """Deletes session cookie."""
+
     response = {
         "status": 0,
         "message": "Success"
