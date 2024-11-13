@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:train_app/theme.dart';
 
-class SampleWorkoutWidget extends StatefulWidget {
-  const SampleWorkoutWidget({super.key});
+class SampleWorkoutWidget extends StatelessWidget {
+  final List<MapEntry<String, String>> workouts;
+  final String workoutType;
 
-  @override
-  State<SampleWorkoutWidget> createState() => _SampleWorkoutWidgetState();
-}
+  const SampleWorkoutWidget({
+    super.key,
+    required this.workouts,
+    required this.workoutType,
+  });
 
-class _SampleWorkoutWidgetState extends State<SampleWorkoutWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,7 +18,7 @@ class _SampleWorkoutWidgetState extends State<SampleWorkoutWidget> {
         color: AppTheme.primaryBackground, // Background color
         borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
       ),
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -28,10 +30,22 @@ class _SampleWorkoutWidgetState extends State<SampleWorkoutWidget> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Chest & Triceps',
-                      style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500, color: AppTheme.primaryText),),
-                  Text('Estimated time: 60 minutes',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground),),
+                  Text(
+                    workoutType,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.primaryText,
+                    ),
+                  ),
+                  Text(
+                    'Estimated time: ${workouts.length * 15} minutes', // Approximation based on number of workouts
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.secondBackground,
+                    ),
+                  ),
                 ],
               ),
               Icon(
@@ -41,71 +55,58 @@ class _SampleWorkoutWidgetState extends State<SampleWorkoutWidget> {
               ),
             ],
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
+          // Dynamically display workout rows
           Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Bench Press'),
-                  Text('4 sets x 8-10 reps',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground)
+            children: List.generate(
+              workouts.length,
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      workouts[index].key,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.primaryText,
                       ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Incline Dumbbell Press'),
-                  Text('3 sets x 10-12 reps',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground)
+                    ),
+                    Text(
+                      workouts[index].value,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.primaryText,
                       ),
-                ],
+                    )
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Cable Flyes'),
-                  Text('3 sets x 12-15 reps',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground)
-                      ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Tricep Pushdowns'),
-                  Text('3 sets x 12-15 reps',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground)
-                      ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Skullcrushers'),
-                  Text('3 sets x 10-12 reps',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.secondBackground)
-                      ),
-                ],
-              ),
-            ],
+            ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+            padding: const EdgeInsets.only(top: 16.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(200, 50), // Set width and height
+                minimumSize: const Size(200, 50),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               onPressed: () {
-                print('Button pressed ...');
+                print('Start $workoutType Workout');
               },
-              child: Text('Start Workout',
-                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.primaryText)),
+              child: Text(
+                'Start Workout',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.primaryText,
+                ),
+              ),
             ),
           ),
         ],

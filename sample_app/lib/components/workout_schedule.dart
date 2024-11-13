@@ -6,6 +6,7 @@ import 'sample_workout.dart' show SampleWorkoutWidget;
 import 'package:intl/intl.dart';
 import '../user_data/signup_info.dart';
 import 'package:provider/provider.dart';
+import '../user_data/user.dart';
 
 String iconChooser(String listOfWorkouts) {
   if (listOfWorkouts == "Rest") {
@@ -117,7 +118,7 @@ class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
                     workoutType: workout.workoutType,
                     icon: workout.icon,
                     onTap: () {
-                      _showWorkoutDetails(context);
+                      _showWorkoutDetails(context, workout);
                     },
                   );
                 },
@@ -129,7 +130,8 @@ class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
     );
   }
 
-  void _showWorkoutDetails(BuildContext context) {
+  void _showWorkoutDetails(BuildContext context, Workout workouts) {
+    final workoutClass = Provider.of<WorkoutSplitProvider>(context, listen: false).workoutSplit;
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -140,7 +142,10 @@ class _WorkoutscheduleWidgetState extends State<WorkoutscheduleWidget> {
           alignment: Alignment.center,
           child: Container(
             width: MediaQuery.of(context).size.width,
-            child: const SampleWorkoutWidget(),
+            child: SampleWorkoutWidget(
+              workoutType: workouts.workoutType,
+              workouts: accessWorkouts(workoutClass.getDay(workouts.day.toLowerCase())),
+            ),
           ),
         );
       },

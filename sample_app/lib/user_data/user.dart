@@ -59,4 +59,48 @@ class WorkoutSplit {
   this.saturdayMuscles = '',
   this.sundayMuscles = '',
   });
+
+    // Function to get the workout list for a given day
+  List<Map<String, dynamic>> getDay(String day) {
+    switch (day.toLowerCase()) {
+      case 'monday':
+        return monday;
+      case 'tuesday':
+        return tuesday;
+      case 'wednesday':
+        return wednesday;
+      case 'thursday':
+        return thursday;
+      case 'friday':
+        return friday;
+      case 'saturday':
+        return saturday;
+      case 'sunday':
+        return sunday;
+      default:
+        return []; // Return an empty list if the day is invalid
+    }
+  }
+}
+
+List<MapEntry<String, String>> accessWorkouts(List<Map<String, dynamic>> day) {
+  List<MapEntry<String, String>> workouts = [];
+
+  for (var workout in day) {
+    String workoutName = workout['workout'] ?? 'Unknown Workout';
+    String quantity = workout['quantity'] ?? 'Unknown Quantity';
+
+    // Modify the quantity format if it contains "sets" and "reps"
+    if (quantity.contains('sets') && quantity.contains('reps')) {
+      quantity = quantity
+          .replaceAll(' sets', '')
+          .replaceAll(' reps', '')
+          .replaceAll('of ', '')
+          .replaceAll(' ', ' x ');
+    }
+
+    workouts.add(MapEntry(workoutName, quantity));
+  }
+
+  return workouts;
 }

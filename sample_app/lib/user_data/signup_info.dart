@@ -8,6 +8,15 @@ String formatMuscleGroups(List<Map<String, dynamic>> data) {
     if (workout.containsKey('primary_muscles')) {
       // Capitalize the first letter of the muscle group
       String muscleGroup = workout['primary_muscles'];
+
+      // Replace "quadriceps" with "Quads" and "Abdominals" with "Abs"
+      if (muscleGroup.toLowerCase() == 'quadriceps') {
+        muscleGroup = 'quads';
+      } else if (muscleGroup.toLowerCase() == 'abdominals') {
+        muscleGroup = 'abs';
+      }
+
+      // Capitalize the first letter of the muscle group if it's not already handled
       String capitalizedMuscleGroup = muscleGroup[0].toUpperCase() + muscleGroup.substring(1);
       uniquePrimaryMuscles.add(capitalizedMuscleGroup);
     }
@@ -29,6 +38,7 @@ String formatMuscleGroups(List<Map<String, dynamic>> data) {
     return '$allButLast, and ${list.last}';
   }
 }
+
 
 
 class FormData {
