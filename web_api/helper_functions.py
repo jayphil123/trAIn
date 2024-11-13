@@ -97,22 +97,54 @@ def check_existing_username(username: str):
 
 def add_user_stats(user_info: dict):
     """Attach user statistics to user_info["username"], in users database."""
-    if not check_existing_username(user_info["username"]):
-        # If username doesn't exist, return error status
+    if check_existing_username(user_info["username"]):
+        # If username exists already, return error
         return 1
 
+    # Save only hashed password
+    new_pass = salt_and_hash_password(user_info["password"])
+    user_info["password"] = new_pass
+    
     # Connect with the database
     with get_cursor() as cur:
-
         # Set up login format
-        params = (username, cookie)
+        params = (user_info["username"],
+                  user_info["password"],
+                  user_info["name"],
+                  user_info["height"],
+                  user_info["weight"],
+                  user_info["gender"],
+                  user_info["age"],
+                  user_info["goals"],
+                  user_info["frequency"],
+                  user_info["intensity"],
+                  user_info["timeframe"],
+                  user_info["workoutplans"]
+                  )
 
-        # Check if login exists
-        cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ", params) # TODO table name?
-        results = len(cur.fetchall())
+        query = """INSERT INTO users (username, password, name, height, weight, gender, age, goals, frequency, intensity, timeframe, workoutplans) VALUES (%s %s %s %s %s %s %s %s %s %s %s %s);"""
+
+        cur.execute(query, params)
+        cur.commit()
 
     # Return positive status
     return 0
+
+def get_user_info(username: str):
+    """Returns dict of user_info."""
+
+    # Connect with the database
+    with get_cursor() as cur:
+        # Set up login format
+        params = (username)
+
+        # Check if login exists
+        cur.execute("SELECT * FROM users WHERE username = ? ", params)
+
+        result = cur.fetchone()
+
+    # Return if user information found
+    return result
 
 
 
