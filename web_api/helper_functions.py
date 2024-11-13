@@ -3,14 +3,14 @@ import psycopg2
 import hashlib
 from dotenv import load_dotenv
 
-# Load enviornment variables
+# Load environment variables
 load_dotenv()
 salt = os.getenv("SALT")
 
 def get_cursor():
     """Returns cursor object."""
 
-    # Get enviornment variable values
+    # Get environment variable values
     host = os.getenv("DB_HOST")
     port = os.getenv("DB_PORT")
     user = os.getenv("DB_USER")

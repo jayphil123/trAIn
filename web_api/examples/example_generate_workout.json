@@ -1,4 +1,6 @@
 {
+  "content":
+  {
     "friday": [
       {
         "category": "powerlifting",
@@ -162,4 +164,7 @@
         "workout": "Isometric Wipers"
       }
     ]
+},
+"message": "Success",
+"status": 1
 }
