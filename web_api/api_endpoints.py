@@ -1,5 +1,5 @@
 from rag import rag_workouts, handle_conversation
-from flask import Flask, request, redirect, url_for, session, Response
+from flask import Flask, request, redirect, url_for, session, Response, make_response
 from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats, get_user_info
 
 
@@ -42,6 +42,24 @@ def get_workouts():
 
 @app.route("/send_convo")
 def send_convo():
+    cookies = request.session
+    username = cookies.get('username')
+    cookie = cookies.get('cookie')
+
+    status = check_valid_cookie(username, cookie)
+    status = True
+    response = {
+        "status": 0,
+        "message": "Success",
+        "content": []
+    }
+
+    if not status:
+        response["status"] = 1
+        response["message"] = "Not valid user"
+        return response
+
+
     args = request.args
     if args.get("query") is None:
         return "Please include a user-query"
@@ -95,17 +113,14 @@ def signup():
     # Create new user entry
     status = add_user_stats(user_info)
 
-    response = {
-        "status": status,
-        "message": "Success"
-    }
+    response = make_response("Setting a cookie")
 
     if status != 0:
-        response["message"] = "Exact Login already exists"
+        response.set_data("Exact Login already exists")
         return Response(response, status=400)
 
     # Set session data
-    session['username'] = user_info["username"]
+    response.set_cookie('username', user_info["username"])
 
     # Returns success
     return Response(response, status=201)  # "status" = 0 on success

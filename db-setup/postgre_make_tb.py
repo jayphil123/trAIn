@@ -25,12 +25,20 @@ try:
     # Create a cursor object
     cursor = connection.cursor()
 
+    # SQL command to delete old table
+    drop_table_query = '''
+    DROP TABLE users;
+    '''
+    cursor.execute(drop_table_query)
+
+
     # SQL command to create a new table
     create_table_query = '''
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL,
         password VARCHAR(256) NOT NULL,
+        name VARCHAR(256) NOT NULL,
         height VARCHAR(50) NOT NULL,
         weight VARCHAR(50) NOT NULL,
         gender VARCHAR(50) NOT NULL,
