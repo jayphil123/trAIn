@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme.dart';
 
 class AIChatWidget extends StatefulWidget {
   const AIChatWidget({super.key});
@@ -34,8 +35,8 @@ class _AIChatWidgetState extends State<AIChatWidget> {
         setState(() {
           _messages.add(Message("Ai: $userMessage", false));
         });
-        _scrollToBottom();
       });
+      _scrollToBottom();
     }
   }
 
@@ -43,21 +44,13 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   void _scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 50),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Access the theme colors
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final backgroundColor = Theme.of(context).colorScheme.surface;
-    final textColor =
-        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white;
-    final inputBackgroundColor =
-        Theme.of(context).colorScheme.surfaceContainerHighest;
-
     return Scaffold(
       body: Column(
         children: [
@@ -67,30 +60,59 @@ class _AIChatWidgetState extends State<AIChatWidget> {
               controller: _scrollController,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUserMessage = message.isUser;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 12.0),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: backgroundColor,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Text(
-                      "${_messages[index].isUser}",
-                      style: TextStyle(color: textColor),
+                  child: Align(
+                    alignment: isUserMessage
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Align(
+                      alignment: isUserMessage
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.8,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: isUserMessage
+                                ? AppTheme.primaryColor
+                                : AppTheme.secondaryColor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(12),
+                              topRight: const Radius.circular(12),
+                              bottomLeft: isUserMessage
+                                  ? const Radius.circular(12)
+                                  : const Radius.circular(0),
+                              bottomRight: isUserMessage
+                                  ? const Radius.circular(0)
+                                  : const Radius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            message.text,
+                            style:
+                                TextStyle(color: AppTheme.bodyTextStyle.color),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
+
           // Fixed text input field at the bottom
           Container(
             padding:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            color: inputBackgroundColor,
+            color: AppTheme.secondaryBackground,
             child: Row(
               children: [
                 Expanded(
