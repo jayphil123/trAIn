@@ -71,8 +71,9 @@ def send_convo():
 
     query = args.get("query")
 
-    # Gets workout routine field
+    # Gets workout and chat history routine fields
     existing_workout = request.args.get("existing_workout",{})
+    chat_history = request.args.get("chat_history",{})
 
     response = {
         "status": 0,
@@ -80,8 +81,7 @@ def send_convo():
         "content": []
     }
 
-    # TODO change query to not be placeholder, add convo history dict[str -> list(str)]
-    response["content"], response["status"] = handle_conversation(query, {}, existing_workout)
+    response["content"], response["status"] = handle_conversation(query, chat_history, existing_workout)
 
     return response
 

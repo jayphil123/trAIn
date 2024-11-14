@@ -330,7 +330,6 @@ def handle_remove_or_replace(new_msg: str, conversation_history: dict[str: list[
             reasoning = list(workout.values())[1]
             if status == "DELETE":
                 print(f"\tDELETING {workout["workout"]}")
-                # TODO if this was the only workout change to rest day?
             elif status == "REPLACE":
                 print(f"\tREPLACING {workout["workout"]}")
                 removed_workout = existing_workout[day][i]
