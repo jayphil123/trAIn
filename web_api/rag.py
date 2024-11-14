@@ -397,7 +397,7 @@ def general_response(new_msg: str, conversation_history: dict[str, list[str]]) -
     return get_chatgpt_response(prompt)
 
 
-def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]) -> dict:
+def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]], existing_workout: dict[str: str]) -> dict:
     """Sorts the newest message into one of three categories and handles appropriately to send proper response."""
 
     prompt =  "Your job is to determine which category of messages a message is classified into. "
@@ -420,10 +420,10 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             return new_plan, 1
         if response["option"] == "Replace a Workout/They Don't Like a Workout":
             print("Replace the Current Workout")
-            workout_routine = {}
-            with open("web_api/examples/example_generate_workout.json", "r") as f:
-                workout_routine = json.load(f)["content"]
-            fixed_plan = replace_workout_endpoint(new_msg, conversation_history, workout_routine)
+            if existing_workout == {}:
+                with open("web_api/examples/example_generate_workout.json", "r") as f:
+                    existing_workout = json.load(f)["content"]
+            fixed_plan = replace_workout_endpoint(new_msg, conversation_history, existing_workout)
             return fixed_plan, 2
         if response["option"] == "General Question About Exercise":
             print("General Question About Exercise")
@@ -431,5 +431,5 @@ def handle_conversation(new_msg: str, conversation_history: dict[str, list[str]]
             return response, 3
     except Exception as e:
         print(e)
-        return "Error", 4
+        return f"{e}", 4
 
