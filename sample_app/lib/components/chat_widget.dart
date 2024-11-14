@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../theme.dart';
 
 class AIChatWidget extends StatefulWidget {
@@ -13,12 +15,55 @@ class Message {
   final bool isUser;
 
   Message(this.text, this.isUser);
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'isUser': isUser,
+      };
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      json['text'],
+      json['isUser'],
+    );
+  }
 }
 
 class _AIChatWidgetState extends State<AIChatWidget> {
   final List<Message> _messages = [];
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _scrollToBottom();
+    });
+  }
+
+  // Method to load messages from local storage
+  Future<void> _loadMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? messagesJson = prefs.getString('messages');
+    if (messagesJson != null) {
+      final List<dynamic> decodedMessages = jsonDecode(messagesJson);
+      setState(() {
+        _messages.clear();
+        _messages.addAll(decodedMessages.map((msg) => Message.fromJson(msg)));
+      });
+    }
+  }
+
+  // Method to save messages to local storage
+  Future<void> _saveMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String messagesJson =
+        jsonEncode(_messages.map((msg) => msg.toJson()).toList());
+    print(messagesJson);
+    await prefs.setString('messages', messagesJson);
+  }
 
   // Method to add a new message
   void _sendMessage() {
@@ -29,14 +74,16 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       });
       _controller.clear();
       _scrollToBottom();
+      _saveMessages();
 
       // Simulate a response with a delay
       Future.delayed(const Duration(milliseconds: 1000), () {
         setState(() {
-          _messages.add(Message("Ai: $userMessage", false));
+          _messages.add(Message("AI: $userMessage", false));
         });
+        _scrollToBottom();
+        _saveMessages();
       });
-      _scrollToBottom();
     }
   }
 
@@ -44,7 +91,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   void _scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
   }
