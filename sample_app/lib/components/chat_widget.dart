@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../theme.dart';
+import '../user_data/talk.dart';
 
 class AIChatWidget extends StatefulWidget {
   const AIChatWidget({super.key});
@@ -67,29 +68,32 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     await prefs.setString('messages', messagesJson);
   }
 
-  // Method to add a new message
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      final userMessage = _controller.text;
-      setState(() {
-        _messages.add(Message(userMessage, true));
-        _messages.add(Message("loading", false));
-      });
-      _controller.clear();
-      _scrollToBottom();
-      _saveMessages();
+Future<void> _sendMessage() async {
+  if (_controller.text.isNotEmpty) {
+    final userMessage = _controller.text;
 
-      // Simulate a response with a delay
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        setState(() {
-          _messages.removeLast();
-          _messages.add(Message("AI: $userMessage", false));
-        });
-        _scrollToBottom();
-        _saveMessages();
-      });
-    }
+    // Add the user message
+    setState(() {
+      _messages.add(Message(userMessage, true));
+      _messages.add(Message("loading", false));
+    });
+    _controller.clear();
+    _scrollToBottom();
+    _saveMessages();
+
+    // Simulate a response with a delay, then update with AI response
+    String aiMessage = await chatMessage(context, userMessage);
+
+    // Add the AI message immediately after receiving it
+    setState(() {
+      _messages.removeLast();
+      _messages.add(Message("AI: $aiMessage", false));
+    });
+    _scrollToBottom();
+    _saveMessages();
   }
+}
+
 
   Future<void> _clearChatHistory() async {
     setState(() {
@@ -237,13 +241,17 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                       hintText: "Type your message...",
                       border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (value) => _sendMessage(),
+                    onSubmitted: (value) async {
+                      await _sendMessage();
+                    },
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
+                  onPressed: () async {
+                    await _sendMessage();
+                  },
+                )
               ],
             ),
           ),

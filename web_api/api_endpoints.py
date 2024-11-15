@@ -1,6 +1,7 @@
 from rag import rag_workouts, handle_conversation
 from flask import Flask, request, redirect, url_for, session, Response, make_response
 from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats, get_user_info
+import json
 
 
 app = Flask(__name__)
@@ -46,7 +47,7 @@ def get_workouts():
 def send_convo():
     """Handles all chat messages."""
 
-    # Veirfy Cookies 
+    # Verify Cookies 
     cookies = request.session
     username = cookies.get('username')
     cookie = cookies.get('cookie')
@@ -71,8 +72,13 @@ def send_convo():
 
     query = args.get("query")
 
-    # Gets workout routine field
+    # Gets workout and chat history routine fields
     existing_workout = request.args.get("existing_workout",{})
+
+    if type(existing_workout) == type("string"):
+        existing_workout = json.loads(existing_workout)
+
+    chat_history = request.args.get("chat_history",{})
 
     response = {
         "status": 0,
@@ -80,8 +86,7 @@ def send_convo():
         "content": []
     }
 
-    # TODO change query to not be placeholder, add convo history dict[str -> list(str)]
-    response["content"], response["status"] = handle_conversation(query, {}, existing_workout)
+    response["content"], response["status"] = handle_conversation(query, chat_history, existing_workout)
 
     return response
 
