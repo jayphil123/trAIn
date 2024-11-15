@@ -50,27 +50,53 @@ Future<void> sendFormDataToServer(BuildContext context) async {
     // print(json.decode(response.body));
 
     Map<String, dynamic> responseMap = json.decode(response.body);
-    List<Map<String, dynamic>> mondayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['monday']);
-    List<Map<String, dynamic>> tuesdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['tuesday']);
-    List<Map<String, dynamic>> wednesdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['wednesday']);
-    List<Map<String, dynamic>> thursdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['thursday']);
-    List<Map<String, dynamic>> fridayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['friday']);
-    List<Map<String, dynamic>> saturdayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['saturday']);
-    List<Map<String, dynamic>> sundayWorkouts = List<Map<String, dynamic>>.from(responseMap['content']['sunday']);
-
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateMonday(mondayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateTuesday(tuesdayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateWednesday(wednesdayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateThursday(thursdayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateFriday(fridayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSaturday(saturdayWorkouts);
-    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSunday(sundayWorkouts);
+    updateWorkouts(responseMap, context);
 
 
   } catch (e) {
     // Handle errors
     print('Error occurred: $e');
   }
+}
+
+Future<String> chatMessage(BuildContext context, String msg) async {
+  final workoutProvider = Provider.of<WorkoutSplitProvider>(context, listen: false);
+  String payload = msg;
+  payload += 'Here is my current workout';
+
+String alterWorkout = jsonEncode({
+  "monday": workoutProvider.workoutSplit.monday,
+  "tuesday": workoutProvider.workoutSplit.tuesday,
+  "wednesday": workoutProvider.workoutSplit.wednesday,
+  "thursday": workoutProvider.workoutSplit.thursday,
+  "friday": workoutProvider.workoutSplit.friday,
+  "saturday": workoutProvider.workoutSplit.saturday,
+  "sunday": workoutProvider.workoutSplit.sunday,
+});
+
+  // Construct the URL with query parameters
+  final url = Uri.parse(
+    'http://localhost:5000/send_convo'
+    '?query=$payload'
+    '&existing_workout=${Uri.encodeComponent(alterWorkout)}',
+  );
+
+  // Send and recieve the message
+  final response = await http.get(url);
+  final responseParsed = json.decode(response.body);
+
+  print(responseParsed["status"]);
+  if (responseParsed["status"] == 2 || responseParsed["status"] == 1) {
+    updateWorkouts(responseParsed, context);
+    String thing = formatWorkoutSplit(responseParsed);
+    print(thing);
+
+    return thing;
+  } else {
+    return responseParsed["content"];
+  }
+
+  // print(json.decode(response.body));
 }
 
 Future<void> sendSignUpDataToBackend(BuildContext context, String firstName, String lastName, String username, String password) async {
@@ -106,4 +132,50 @@ Future<void> sendSignUpDataToBackend(BuildContext context, String firstName, Str
     //  errors
     print('Error occurred: $e');
   }
+}
+
+String formatWorkoutSplit(Map<String, dynamic> workoutSplit) {
+  String formattedSplit = "";
+
+  List<String> days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+
+  // Check if 'content' is a Map<String, dynamic>
+  if (workoutSplit["content"] is Map<String, dynamic>) {
+    Map<String, dynamic> workouts = workoutSplit["content"];
+    
+    for (String day in days) {
+      if (workouts[day] is List) {
+        // Cast to List<Map<String, dynamic>> after verifying it's a List
+        List<Map<String, dynamic>> new_day = List<Map<String, dynamic>>.from(workouts[day]);
+        formattedSplit += "$day: ";
+        for (Map<String, dynamic> workout in new_day) {
+          formattedSplit += "${workout["workout"]} ";
+        }
+        formattedSplit = formattedSplit.substring(0, formattedSplit.length - 1); // Remove trailing space
+        formattedSplit += "\n";
+      }
+    }
+  } else {
+    print("Error: 'content' is not a Map.");
+  }
+  
+  return formattedSplit;
+}
+
+void updateWorkouts(final oldSplit, BuildContext context) {
+    List<Map<String, dynamic>> mondayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['monday']);
+    List<Map<String, dynamic>> tuesdayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['tuesday']);
+    List<Map<String, dynamic>> wednesdayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['wednesday']);
+    List<Map<String, dynamic>> thursdayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['thursday']);
+    List<Map<String, dynamic>> fridayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['friday']);
+    List<Map<String, dynamic>> saturdayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['saturday']);
+    List<Map<String, dynamic>> sundayWorkouts = List<Map<String, dynamic>>.from(oldSplit['content']['sunday']);
+
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateMonday(mondayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateTuesday(tuesdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateWednesday(wednesdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateThursday(thursdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateFriday(fridayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSaturday(saturdayWorkouts);
+    Provider.of<WorkoutSplitProvider>(context, listen: false).updateSunday(sundayWorkouts);
 }
