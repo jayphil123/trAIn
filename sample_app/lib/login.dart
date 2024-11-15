@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import 'signup1.dart' show SignUpPage1;
-import 'homepage.dart' show HomepageWidget;
+import 'user_data/talk.dart';
+import 'signup_load.dart';
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
+
+final emailController = TextEditingController();
+final passwordController = TextEditingController();
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,8 +16,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
   bool passwordVisible = false;
 
   @override
@@ -57,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Username',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -85,11 +88,17 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 16),
               // Sign In Button
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const HomepageWidget()),
-                  );
+                onPressed: () async {
+                  bool login = await validLogin(context);
+                  if (login) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const SplashScreen(fromLogin: true,)),
+                    );
+                  } else {
+                    // TODO add something to indicate failed login
+                  }
                 },
                 child: Text('Sign In'),
               ),
@@ -97,9 +106,10 @@ class _LoginPageState extends State<LoginPage> {
               // Sign Up Link
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
+                  Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                        builder: (context) => const SignUpPage1()),
+                        builder: (context) =>
+                            const SplashScreen(fromLogin: true,)),
                   );
                 },
                 child: Text(
@@ -112,5 +122,32 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+Future<bool> validLogin(BuildContext context) async {
+  final response = await loginRequest(emailController.text, passwordController.text);
+
+  print(response);
+
+  if (response["status"] == 0) {
+    final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
+
+    formData.username = response["user_info"][1];
+    formData.password = "";
+    formData.name = response["user_info"][3];
+    formData.height = response["user_info"][4];
+    formData.weight = response["user_info"][5];
+    formData.gender = response["user_info"][6];
+    formData.age = response["user_info"][7];
+    formData.goals = List<String>.from(response["user_info"][8].map((item) => item.toString()));
+    formData.frequency = List<String>.from(response["user_info"][9].map((item) => item.toString()));
+    formData.intensity = List<String>.from(response["user_info"][10].map((item) => item.toString()));
+    formData.timeframe = List<String>.from(response["user_info"][11].map((item) => item.toString()));
+    formData.workoutPlans = response["user_info"][12];
+
+    return true;
+  } else {
+    return false;
   }
 }

@@ -76,6 +76,16 @@ class FormDataProvider with ChangeNotifier {
 
   FormData get formData => _formData;
 
+  void updateUsername(String data) {
+    _formData.username = data;
+    notifyListeners();
+  }
+
+  void updatePassword(String data) {
+    _formData.password = data;
+    notifyListeners();
+  }
+
   void updateName(String data) {
     _formData.name = data;
     notifyListeners();

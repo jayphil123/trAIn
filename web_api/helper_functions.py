@@ -143,7 +143,7 @@ def get_user_info(username: str):
     with get_con() as con:
         cur = con.cursor()
         # Set up login format
-        params = (username)
+        params = (username,)
 
         # Check if login exists
         cur.execute("SELECT * FROM users WHERE username = %s ", params)
