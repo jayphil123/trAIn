@@ -98,7 +98,7 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const SplashScreen()),
+                                        const SplashScreen(fromLogin: false,)),
                               );
                             },
                             style: ElevatedButton.styleFrom(

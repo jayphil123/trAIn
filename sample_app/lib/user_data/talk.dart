@@ -60,6 +60,7 @@ Future<void> sendFormDataToServer(BuildContext context) async {
 }
 
 Future<String> chatMessage(BuildContext context, String msg) async {
+
   final workoutProvider = Provider.of<WorkoutSplitProvider>(context, listen: false);
   String payload = msg;
   payload += 'Here is my current workout';
@@ -99,39 +100,54 @@ String alterWorkout = jsonEncode({
   // print(json.decode(response.body));
 }
 
-Future<void> sendSignUpDataToBackend(BuildContext context, String firstName, String lastName, String username, String password) async {
-  try {
-    final payload = {
-      'full_name': "$firstName $lastName",
-      'username': username,
-      'password': password,
-    };
+Future<void> sendSignUpDataToBackend(BuildContext context) async {
+  final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
 
-    print(payload); 
+  final url = Uri.parse('http://localhost:5000//signup_form');  // Replace with your server URL
 
-    // Commented this out for now since it doesn't work
+  // Prepare the data to send
+  final Map<String, dynamic> userInfo = {
+    'username': formData.username,
+    'password': formData.password,
+    'name': formData.name,
+    'height': formData.height,  // height in centimeters
+    'weight': formData.weight,  // weight in kilograms
+    'gender': formData.gender,
+    'age': formData.age,
+    'goals': formData.goals,  // list of goals
+    'frequency': formData.frequency,  // list of workout frequency
+    'intensity': formData.intensity,  // list of workout intensity
+    'timeframe': formData.timeframe,  // list of timeframes for achieving goals
+    'workoutplans': formData.workoutPlans,  // user’s preferred workout plan
+  };
 
-    // Define the URL of your AWS instance endpoint
-    // final url = Uri.parse('http://localhost:5000/get_workout?query=$query&count=$count');
-    // // final url = dotenv.get('AWS_API_URL');
+  // Make the POST request
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(userInfo),
+  );
 
-
-    // final response = await http.post(
-    //   Uri.parse(url),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: json.encode(payload), // convert payload to json
-    // );
-
-    // if (response.statusCode == 200) {
-    //   print('Data sent successfully!');
-    // } else {
-    //   // error
-    //   print('Failed to send data. Status Code: ${response.statusCode}');
-    // }
-  } catch (e) {
-    //  errors
-    print('Error occurred: $e');
+  // Check the response status
+  if (response.statusCode == 200) {
+    print('User created successfully');
+    print('Response body: ${response.body}');
+  } else if (response.statusCode == 400) {
+    print('Error: ${response.body}');
+  } else {
+    print('Unexpected error: ${response.statusCode}');
   }
+}
+
+Future<Map<String, dynamic>> loginRequest(String username, String password) async {
+  final uri = Uri.parse("http://127.0.0.1:5000/login_form?username=$username&password=$password");
+
+  final response = await http.post(
+    uri,
+  );
+
+  final responseParsed = json.decode(response.body);
+  return responseParsed;
 }
 
 String formatWorkoutSplit(Map<String, dynamic> workoutSplit) {
