@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                         builder: (context) =>
-                            const SplashScreen(fromLogin: true,)),
+                            const SignUpPage1()),
                   );
                 },
                 child: Text(
