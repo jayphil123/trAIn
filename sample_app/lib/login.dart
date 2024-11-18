@@ -5,6 +5,7 @@ import 'user_data/talk.dart';
 import 'signup_load.dart';
 import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
+import 'signup1.dart';
 
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
