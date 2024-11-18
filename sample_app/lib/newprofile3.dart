@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
 import 'signup_load.dart';
-
+import 'theme.dart';
 
 class NewProfilePage3 extends StatefulWidget {
   const NewProfilePage3({super.key});
@@ -41,7 +41,7 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: AppTheme.pagePadding,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,23 +51,29 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 22, bottom: 12),
-                          child: Text(
-                            'Create your personalized profile',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        Text(
+                          'Create your trAIn workout goals',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryText,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Identify your workout goals to best tailor your workout plan',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppTheme.secondaryText,
                           ),
                         ),
                         const SizedBox(height: 16),
                         _buildCheckboxGroup(
                           title: 'What intensity level do you prefer?',
                           options: [
-                            'Light (e.g., walking, gentle stretching)',
-                            'Moderate (e.g., jogging, bodyweight exercises)',
-                            'Intense (e.g., HIIT, heavy lifting)',
+                            'Light\n (walking, gentle stretching)',
+                            'Moderate\n (jogging, bodyweight exercises)',
+                            'Intense\n (HIIT, heavy lifting)',
                           ],
                           selectedOptions: selectedIntensityLevels,
                         ),
@@ -86,32 +92,29 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                         _buildGoalDescriptionField(),
                         const SizedBox(height: 30),
                         Align(
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
                           child: ElevatedButton(
                             onPressed: () {
                               Provider.of<FormDataProvider>(context, listen: false)
-                                .updateWorkoutPlans(goalDescriptionController.text);
+                                  .updateWorkoutPlans(goalDescriptionController.text);
                               Provider.of<FormDataProvider>(context, listen: false)
-                                .updateIntensity(selectedIntensityLevels);
+                                  .updateIntensity(selectedIntensityLevels);
                               Provider.of<FormDataProvider>(context, listen: false)
-                                .updateTimeframe(selectedTimeframes);
+                                  .updateTimeframe(selectedTimeframes);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SplashScreen()),
+                                  builder: (context) => const SplashScreen(),
+                                ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              // primary: Colors.blueAccent,
                             ),
                             child: const Text(
                               'Finish',
-                              // style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -147,40 +150,61 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppTheme.primaryText,
           ),
         ),
         const SizedBox(height: 8),
+        const SizedBox(height: 8),
         ...options.map((option) {
-          return CheckboxListTile(
-            value: selectedOptions.contains(option),
-            title: Text(option, style: Theme.of(context).textTheme.bodyLarge),
-            onChanged: (isSelected) {
-              setState(() {
-                isSelected!
-                    ? selectedOptions.add(option)
-                    : selectedOptions.remove(option);
-              });
-            },
-            controlAffinity:
-                ListTileControlAffinity.leading, // Moves checkbox to the left
+          final isSelected = selectedOptions.contains(option);
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            decoration: BoxDecoration(
+              color: isSelected ? AppTheme.primaryBackground : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: CheckboxListTile(
+              value: isSelected,
+              title: Text(
+                option,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: isSelected ? Colors.white : AppTheme.secondaryText,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  value!
+                      ? selectedOptions.add(option)
+                      : selectedOptions.remove(option);
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: AppTheme.primaryColor,
+              checkColor: AppTheme.primaryText,
+              checkboxShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 2,
+              ),
+            ),
           );
         }).toList(),
       ],
     );
   }
 
-  // Helper method to create the text field for goal description
+  // helper
   Widget _buildGoalDescriptionField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Tell us about your fitness goals',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          style: const TextStyle(
+            fontSize: 18,
+            color: AppTheme.primaryText,
           ),
         ),
         const SizedBox(height: 8),
@@ -190,9 +214,8 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
           decoration: InputDecoration(
             hintText: 'Describe your fitness goals in a few sentences...',
             filled: true,
-            // fillColor: Colors.grey[200],
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide.none,
             ),
           ),

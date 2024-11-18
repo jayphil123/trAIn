@@ -5,10 +5,11 @@ class AppTheme {
   static const Color primaryColor = Color(0xFF8638E5);
   static const Color secondaryColor = Color(0xFF232323);
   static const Color alternateColor = Color(0xFF262D34);
+  static const Color accentColor = Color(0xFFe0e0e0);
   static const Color tertiaryColor = Color(0xFF39d2c0);
 
   static const Color primaryText = Color(0xFFFFFFFF);
-  static const Color secondaryText = Color(0xFFFFFFFF);
+  static const Color secondaryText = Color(0xFF8b97a2);
   static const Color tertiaryText = Color(0x00000000);
   // static const Color secondaryText = Color(0xFF8B97A2);
   static const Color primaryBackground = Color(0xFF1A1F24);
@@ -18,12 +19,20 @@ class AppTheme {
   static const Color firstBackground = Color.fromARGB(255, 222, 224, 223);
   static const Color secondBackground = Color.fromARGB(255, 118, 118, 118);
 
+    static const EdgeInsets pagePadding = EdgeInsets.symmetric(horizontal: 24);
+
   // Text style for titles
   static const TextStyle titleTextStyle = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
     color: primaryText,
   );
+
+
+  static const TextStyle subTitleTextStyle = TextStyle(
+      fontSize: 24,
+      color: primaryText,
+    );
 
   // Text style for body text
   static const TextStyle bodyTextStyle = TextStyle(
@@ -91,6 +100,9 @@ class AppTheme {
         onPrimary: primaryText,
         onSecondary: secondaryText,
       ),
+
+      // MARGIN PAGE THEME
+      // pagePadding: const EdgeInsets.symmetric(horizontal: 32), 
     );
   }
 }

@@ -10,7 +10,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.secondaryBackground,
       appBar: AppBar(
-        title: const Text('Profile', style: AppTheme.titleTextStyle),
+        title: const Text('Profile', style: AppTheme.subTitleTextStyle),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -37,6 +37,10 @@ class ProfilePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TrainingInfo(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GoalInfo(),
             ),
           ],
         ),
@@ -75,36 +79,39 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
         ),
-        alignment: Alignment.bottomLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Row(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Left Column: Profile Icon with padding
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0), // Adjust the padding value as needed
+            child: CircleAvatar(
+              radius: 22,
+              backgroundColor: AppTheme.secondaryBackground,
+              child: Icon(Icons.person, size: 26, color: AppTheme.primaryText),
+            ),
+          ),
+          const SizedBox(width: 16),
+
+          // Right Column: Username and Email
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(width: 12),
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AppTheme.secondaryBackground,
-                  child: Icon(Icons.person, size: 20, color: AppTheme.primaryText),
-                ),
-                const SizedBox(width: 8),
                 Text(
                   '[USER NAME]',
-                  style: AppTheme.titleTextStyle.copyWith(fontSize: 24),
+                  style: AppTheme.titleTextStyle.copyWith(fontSize: 26),
+                ),
+                Text(
+                  'user@example.com',
+                  style: AppTheme.bodyTextStyle.copyWith(fontSize: 14),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                'user@example.com',
-                style: AppTheme.bodyTextStyle.copyWith(fontSize: 14),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
       ),
     );
   }
@@ -252,7 +259,6 @@ class AthleteInfo extends StatelessWidget {
               'Athlete Info',
               style: AppTheme.titleTextStyle.copyWith(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -317,40 +323,65 @@ class TrainingInfo extends StatelessWidget {
       ),
       child: Column(
         children: [
-
           ListTile(
             leading: Icon(Icons.fitness_center, color: AppTheme.primaryText),
             title: Text(
               'Training Info',
               style: AppTheme.titleTextStyle.copyWith(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-
           Divider(
             height: 1,
             color: AppTheme.alternateColor,  
             thickness: 1, 
           ),
           
-
           const SizedBox(height: 12), 
-
-
+          
           _buildDataRow('Intensity Level', 'Light'),  // PULL INFO
           _buildDataRow('Goal Timeframe', 'X Months'),
-          _buildDataRow('Goal Description', 'Some long description'),
+          
+          // Goal Description with constrained width
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Goal Description',
+                style: AppTheme.bodyTextStyle,
+              ),
+              const SizedBox(width: 8),
+              Expanded( // Fixed here, no space between Expanded and the opening parenthesis
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 220),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      'Some long description that wraps around if it’s too long to fit within the specified width...etc',
+                      style: AppTheme.bodyTextStyle.copyWith(
+                        color: AppTheme.secondaryText, 
+                      ),
+                      overflow: TextOverflow.visible, 
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+
         ],
       ),
     );
   }
 
-
   Widget _buildDataRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.only(bottom: 12.0), 
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0), 
         child: Row(
@@ -378,3 +409,70 @@ class TrainingInfo extends StatelessWidget {
   }
 }
 
+
+class GoalInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.alternateColor, width: 1),
+        color: AppTheme.secondaryBackground,
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.rocket, color: AppTheme.primaryText),
+            title: Text(
+              'Goal Info',
+              style: AppTheme.titleTextStyle.copyWith(
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Divider(
+            height: 1,
+            color: AppTheme.alternateColor,
+            thickness: 1,
+          ),
+          const SizedBox(height: 12),
+          _buildDataRow('Goal Description', 'Some long description that wraps around if it’s too long to fit within the specified width...etc'),
+        ],
+      ),
+    );
+  }
+
+  // Row creation helper
+  Widget _buildDataRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: AppTheme.bodyTextStyle.copyWith(
+              color: AppTheme.primaryText,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                value,
+                style: AppTheme.bodyTextStyle.copyWith(
+                  color: AppTheme.secondaryText,
+                ),
+                overflow: TextOverflow.visible,
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
