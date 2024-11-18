@@ -19,6 +19,7 @@ dependencies:
   intl: ^0.18.1
   http: ^0.13.6
   flutter_dotenv: ^5.0.2
+  shared_preferences: ^2.1.1
 
 dev_dependencies:
   flutter_test:

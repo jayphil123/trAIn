@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:train_app/newprofile1.dart';
 import 'newprofile1.dart' show NewProfilePage1;
-import 'user_data/talk.dart';
 import 'theme.dart';
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 class SignUpPage1 extends StatefulWidget {
   const SignUpPage1({super.key});
@@ -28,14 +29,6 @@ class _SignUpPage1State extends State<SignUpPage1> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  Future<void> _onSubmit() async {
-    final firstName = _firstNameController.text;
-    final lastName = _lastNameController.text;
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    await sendSignUpDataToBackend(context, firstName, lastName, username, password);
   }
 
   @override
@@ -246,8 +239,13 @@ class _SignUpPage1State extends State<SignUpPage1> {
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: ElevatedButton(
                     onPressed: () {
-                      _onSubmit(); 
-                      Navigator.of(context).push(
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateName("${_firstNameController.text} ${_lastNameController.text}");
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateUsername(_usernameController.text);
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updatePassword(_passwordController.text);
+                      Navigator.of(context).push( // Go to the next page
                         MaterialPageRoute(
                           builder: (context) => const NewProfilePage1(),
                         ),

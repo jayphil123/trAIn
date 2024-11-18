@@ -91,6 +91,13 @@ db-setup/*
 - free-exercise-db.json: the workout data used as context for the model  
 - workouts_schema.sql: the schema for the table created in data_to_db.py  
 
+web_api/*
+- Python files for handling backend messaging
+- api_endpoints.py: offers several API endpoints about sending user data, sending chat message, and login capabilities
+- rag.py: offers all rag functions to generate workouts, replace workouts, or general chat capabilities
+- helper_functions: general functions to help with other functions needed for login and rag
+- examples/*.json: Example responses for different chat types for api_endpoints.py 
+
 sample_app/*
 - Frontend application built using flutter  
 

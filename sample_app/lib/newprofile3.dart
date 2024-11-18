@@ -103,8 +103,8 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                                   .updateTimeframe(selectedTimeframes);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                  builder: (context) => const SplashScreen(),
-                                ),
+                                    builder: (context) =>
+                                        const SplashScreen(fromLogin: false,)),
                               );
                             },
                             style: ElevatedButton.styleFrom(

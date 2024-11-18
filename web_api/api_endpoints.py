@@ -1,20 +1,23 @@
 from rag import rag_workouts, handle_conversation
-from flask import Flask, request, redirect, url_for, session, Response
-from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie
+from flask import Flask, request, redirect, url_for, session, Response, make_response, jsonify
+from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats, get_user_info
+import json
 
 
-app = Flask(__name__) 
+app = Flask(__name__)
 
 @app.route("/get_workout")
 def get_workouts():
-    # # Get args data
-    # cookies = request.session
-    # username = cookies.get('username')
-    # cookie = cookies.get('cookie')
+    """Handles Get workouts endpoint."""
 
-    # status = check_valid_cookie(username, cookie)
+    # Handles cookies
+    cookies = request.session
+    username = cookies.get('username')
+    cookie = cookies.get('cookie')
+
+    status = check_valid_cookie(username, cookie)
     status = True
-    response = { 
+    response = {
         "status": 0,
         "message": "Success",
         "content": []
@@ -28,24 +31,54 @@ def get_workouts():
     args = request.args
     if args.get("query") is None:
         return "Please include a user-query"
-    
-    count = 5 
+
+    count = 5
     if args.get("count") is not None:
         count = int(args.get("count"))
-    
+
     query = args.get("query")
 
     response["content"] = rag_workouts(query, count)
     return response
 
+# ********** Route for all queries sent through chat feature in app **********
 
 @app.route("/send_convo")
 def send_convo():
+    """Handles all chat messages."""
+
+    # Verify Cookies 
+    # cookies = request.session
+    # username = cookies.get('username')
+    # cookie = cookies.get('cookie')
+
+    # status = check_valid_cookie(username, cookie)
+    status = True
+    response = {
+        "status": 0,
+        "message": "Success",
+        "content": []
+    }
+
+    if not status:
+        response["status"] = 1
+        response["message"] = "Not valid user"
+        return response
+
+    # Handles query
     args = request.args
     if args.get("query") is None:
         return "Please include a user-query"
 
     query = args.get("query")
+
+    # Gets workout and chat history routine fields
+    existing_workout = request.args.get("existing_workout",{})
+
+    if type(existing_workout) == type("string"):
+        existing_workout = json.loads(existing_workout)
+
+    chat_history = request.args.get("chat_history",{})
 
     response = {
         "status": 0,
@@ -53,85 +86,77 @@ def send_convo():
         "content": []
     }
 
-    # TODO change query to not be placeholder
-    response["content"], response["status"] = handle_conversation(query, {})
+    response["content"], response["status"] = handle_conversation(query, chat_history, existing_workout)
 
     return response
 
+# ********** All login / logout endpoints below **********
 
-@app.route("/login-form", methods=['POST'])
+# Form: /login-form?username=<username>&password=<password>
+@app.route("/login_form", methods=['POST'])
 def login_page():
+    """Logins user and creates a cookie."""
+
     # Get args data
     args = request.args
     username = args.get('username')
     password = args.get('password')
 
-    status = check_existing_login(username, password)
-    response = { 
+    if not check_existing_login(username, password):
+        return jsonify({"status": 1, "message": "Failed login"}), 400
+
+
+    user_info = get_user_info(username)
+
+    response = {
         "status": 0,
-        "message": "Success"
+        "message": "Success",
+        "user_info": user_info
     }
 
-    if status == True:
-         # Set session data
-        session['username'] = username
-        session['cookie-token'] = salt_and_hash_password(password)        
-        return Response(response, status=200)
-   
-    response["status"] = 1
-    response["message"] = "failed login"
-    return Response(response, status=200)
+    # Set session data
+    # session['username'] = username
+
+    return jsonify(response), 200
 
 
-@app.route('/signup-form', methods=['POST'])
+@app.route('/signup_form', methods=['POST'])
 def signup():
+    """Creates a new user and makes a cookie."""
 
-    # Get args data
-    args = request.session
-    username = args.get('username')
-    password = args.get('password')
+    # Save attatched json data into user_info dict
+    user_info = request.get_json()
 
     # Create new user entry
-    status = create_new_login(username, password)
+    status = add_user_stats(user_info)
 
-    response = {
-        "status": status,
-        "message": "Success"
-    }
+    response = make_response("Setting a cookie")
 
-    # Check error messages
-    if status == 1:
-        response["message"] = "Exact Login already exists" 
-        return Response(response, status=200)
-    if status == 2:
-        response["message"] = "Username already exists" 
-        return Response(response, status=200)
-    if status == 3:
-        response["message"] = "Error Creating Account"
-        return Response(response, status=200)
+    if status != 0:
+        response.set_data("Exact Login already exists")
+        return Response(response, status=400)
 
     # Set session data
-    session['username'] = username
-    session['cookie-token'] = salt_and_hash_password(password)        
+    response.set_cookie('username', user_info["username"])
 
     # Returns success
-    return Response(response, status=201)
+    return Response(response, status=201)  # "status" = 0 on success
 
-@app.route('/logout-form', methods=['POST'])
+@app.route('/logout_form', methods=['POST'])
 def logout():
+    """Deletes session cookie."""
+
     response = {
         "status": 0,
         "message": "Success"
     }
 
-    # Set session data
-    session['username'] = ""
-    session['cookie-token'] = ""
+    # Remove session data
+    session.clear()
 
     # Returns success
     return Response(response, status=200)
 
 
-if __name__ == "__main__": 
-    app.run(debug=True) 
-
+if __name__ == "__main__":
+    app.run(debug=True)
