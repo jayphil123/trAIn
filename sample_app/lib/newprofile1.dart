@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'newprofile2.dart' show NewProfilePage2;
 import 'package:provider/provider.dart';
 import 'user_data/signup_info.dart';
+import 'theme.dart';
 
 class NewProfilePage1 extends StatefulWidget {
   const NewProfilePage1({Key? key}) : super(key: key);
@@ -42,95 +43,96 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: AppTheme.pagePadding,
             child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 22),
-                          child: Text(
-                            'Create your personalized profile',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                      'Create your trAIn workout profile',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryText,
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            'Help us understand yourself as a user',
-                            style: TextStyle(
-                              fontSize: 16,
-                              // color: Colors.grey,
-                            ),
-                          ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Set up a basic account to get started',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppTheme.secondaryText,
                         ),
-                        const SizedBox(height: 16),
-                        _buildInputField(
-                          controller: textController1,
-                          labelText: 'Enter your height',
-                          hintText: 'Height',
-                        ),
-                        const SizedBox(height: 20),
-                        _buildInputField(
-                          controller: textController2,
-                          labelText: 'Enter your weight',
-                          hintText: 'Weight',
-                        ),
-                        const SizedBox(height: 20),
-                        _buildInputField(
-                          controller: textController3,
-                          labelText: 'Enter your gender',
-                          hintText: 'Gender',
-                        ),
-                        const SizedBox(height: 20),
-                        _buildInputField(
-                          controller: textController4,
-                          labelText: 'Enter your age',
-                          hintText: 'Age',
-                        ),
-                        const SizedBox(height: 30),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: () {
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                .updateHeight(textController1.text);
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                .updateWeight(textController2.text);
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                .updateGender(textController3.text);
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                .updateAge(textController4.text);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NewProfilePage2()),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Image(
-                    image: AssetImage('assets/images/train-white-logo.png'),
+                const SizedBox(height: 8),
+                _buildInputField(
+                  controller: textController1,
+                  labelText: 'Enter your height',
+                  hintText: 'Height',
+                ),
+                const SizedBox(height: 20),
+                _buildInputField(
+                  controller: textController2,
+                  labelText: 'Enter your weight',
+                  hintText: 'Weight',
+                ),
+                const SizedBox(height: 20),
+                _buildInputField(
+                  controller: textController3,
+                  labelText: 'Enter your gender',
+                  hintText: 'Gender',
+                ),
+                const SizedBox(height: 20),
+                _buildInputField(
+                  controller: textController4,
+                  labelText: 'Enter your age',
+                  hintText: 'Age',
+                ),
+                const SizedBox(height: 30),
+                // Elevated Button (Purple button)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Update form data before navigating
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateHeight(textController1.text);
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateWeight(textController2.text);
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateGender(textController3.text);
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateAge(textController4.text);
+
+                      // Navigate to the next page
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const NewProfilePage2(),
+                        ),
+                      );
+                    },
+                    child: const Text('Next'),
+                  ),
+                ),
+                const SizedBox(height: 12), // Spacing after button
+
+                // Logo Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/images/train-white-logo.png',
                     width: 120,
                     height: 60,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ],
@@ -152,13 +154,20 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
       children: [
         Text(
           labelText,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: TextStyle(
+            fontSize: 14, // Set label text size to 14
+            color: AppTheme.primaryText,
+          ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: TextStyle(
+              fontSize: 14,
+              color: AppTheme.secondaryText,
+            ),
           ),
         ),
       ],

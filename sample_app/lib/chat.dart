@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'components/chat_widget.dart';
+import 'theme.dart';
 
 class TrAInChatWidget extends StatefulWidget {
   const TrAInChatWidget({super.key});
