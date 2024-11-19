@@ -10,7 +10,6 @@ import 'signup1.dart';
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -37,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           padding: AppTheme.pagePadding,
           child: Column(
-            mainAxisSize: MainAxisSize.min, // Ensures Column takes up only as much space as needed
+            mainAxisSize: MainAxisSize
+                .min, // Ensures Column takes up only as much space as needed
             children: [
-
               Container(
                 padding: const EdgeInsets.only(top: 30, bottom: 18),
                 child: Image.asset(
@@ -52,11 +51,14 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 'Reimagine your workout regime',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryText),
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryText),
               ),
-              const SizedBox(height: 8), 
+              const SizedBox(height: 8),
               Container(
-                width: 212, 
+                width: 212,
                 child: Text(
                   'Join the future of personalized workouts with trAIn',
                   textAlign: TextAlign.center,
@@ -68,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
+                  hintText: 'Username',
+                  border: InputBorder.none,
                   filled: true,
-                  labelText: 'Username',
-                  border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -95,15 +97,16 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 72), 
+              const SizedBox(height: 72),
               ElevatedButton(
                 onPressed: () async {
                   bool login = await validLogin(context);
                   if (login) {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const SplashScreen(fromLogin: true,)),
+                          builder: (context) => const SplashScreen(
+                                fromLogin: true,
+                              )),
                     );
                   } else {
                     // TODO add something to indicate failed login
@@ -115,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
               // Sign Up Link
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(
+                  Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const SignUpPage1(),
                     ),
@@ -150,12 +153,14 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 Future<bool> validLogin(BuildContext context) async {
-  final response = await loginRequest(emailController.text, passwordController.text);
+  final response =
+      await loginRequest(emailController.text, passwordController.text);
 
   print(response);
 
   if (response["status"] == 0) {
-    final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
+    final formData =
+        Provider.of<FormDataProvider>(context, listen: false).formData;
 
     formData.username = response["user_info"][1];
     formData.password = "";
@@ -164,10 +169,14 @@ Future<bool> validLogin(BuildContext context) async {
     formData.weight = response["user_info"][5];
     formData.gender = response["user_info"][6];
     formData.age = response["user_info"][7];
-    formData.goals = List<String>.from(response["user_info"][8].map((item) => item.toString()));
-    formData.frequency = List<String>.from(response["user_info"][9].map((item) => item.toString()));
-    formData.intensity = List<String>.from(response["user_info"][10].map((item) => item.toString()));
-    formData.timeframe = List<String>.from(response["user_info"][11].map((item) => item.toString()));
+    formData.goals = List<String>.from(
+        response["user_info"][8].map((item) => item.toString()));
+    formData.frequency = List<String>.from(
+        response["user_info"][9].map((item) => item.toString()));
+    formData.intensity = List<String>.from(
+        response["user_info"][10].map((item) => item.toString()));
+    formData.timeframe = List<String>.from(
+        response["user_info"][11].map((item) => item.toString()));
     formData.workoutPlans = response["user_info"][12];
 
     return true;

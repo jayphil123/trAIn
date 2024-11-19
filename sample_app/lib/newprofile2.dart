@@ -98,19 +98,21 @@ class _NewProfilePage2State extends State<NewProfilePage2> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                  .updateGoals(selectedFitnessGoals);
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                  .updateFrequency(selectedFrequency);
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Provider.of<FormDataProvider>(context,
+                                        listen: false)
+                                    .updateGoals(selectedFitnessGoals);
+                                Provider.of<FormDataProvider>(context,
+                                        listen: false)
+                                    .updateFrequency(selectedFrequency);
 
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NewProfilePage3()),
-                              );
-                            },
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewProfilePage3()),
+                                );
+                              },
                               child: const Text('Next'),
                             ),
                           ),
@@ -158,7 +160,8 @@ class _NewProfilePage2State extends State<NewProfilePage2> {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 2),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryBackground : Colors.transparent,
+              color:
+                  isSelected ? AppTheme.primaryBackground : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
             ),
             child: CheckboxListTile(
@@ -166,8 +169,8 @@ class _NewProfilePage2State extends State<NewProfilePage2> {
               title: Text(
                 option,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: isSelected ? Colors.white : AppTheme.secondaryText,
-                ),
+                      color: isSelected ? Colors.white : AppTheme.secondaryText,
+                    ),
               ),
               onChanged: (value) {
                 setState(() {

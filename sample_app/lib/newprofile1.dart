@@ -55,7 +55,7 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                      'Create your trAIn workout profile',
+                        'Create your trAIn workout profile',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -77,13 +77,13 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
                 _buildInputField(
                   controller: textController1,
                   labelText: 'Enter your height',
-                  hintText: 'Height',
+                  hintText: 'Height (cm)',
                 ),
                 const SizedBox(height: 20),
                 _buildInputField(
                   controller: textController2,
                   labelText: 'Enter your weight',
-                  hintText: 'Weight',
+                  hintText: 'Weight (kg)',
                 ),
                 const SizedBox(height: 20),
                 _buildInputField(
@@ -105,13 +105,13 @@ class _NewProfilePage1State extends State<NewProfilePage1> {
                     onPressed: () {
                       // Update form data before navigating
                       Provider.of<FormDataProvider>(context, listen: false)
-                        .updateHeight(textController1.text);
+                          .updateHeight(textController1.text);
                       Provider.of<FormDataProvider>(context, listen: false)
-                        .updateWeight(textController2.text);
+                          .updateWeight(textController2.text);
                       Provider.of<FormDataProvider>(context, listen: false)
-                        .updateGender(textController3.text);
+                          .updateGender(textController3.text);
                       Provider.of<FormDataProvider>(context, listen: false)
-                        .updateAge(textController4.text);
+                          .updateAge(textController4.text);
 
                       // Navigate to the next page
                       Navigator.of(context).push(

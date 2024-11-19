@@ -70,7 +70,6 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     }
   }
 
-  // Method to load messages from local storage
   Future<void> _loadMessages() async {
     final prefs = await SharedPreferences.getInstance();
     final String? messagesJson = prefs.getString('messages');
@@ -83,7 +82,6 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     }
   }
 
-  // Method to save messages to local storage
   Future<void> _saveMessages() async {
     final prefs = await SharedPreferences.getInstance();
     final String messagesJson =
@@ -96,7 +94,6 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     if (_controller.text.isNotEmpty) {
       final userMessage = _controller.text;
 
-      // Add the user message
       setState(() {
         _messages.add(Message(userMessage, true));
         _messages.add(Message("loading", false));
@@ -105,13 +102,11 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       _scrollToBottom();
       _saveMessages();
 
-      // Simulate a response with a delay, then update with AI response
       String aiMessage = await chatMessage(context, userMessage);
 
-      // Add the AI message immediately after receiving it
       setState(() {
         _messages.removeLast();
-        _messages.add(Message("AI: $aiMessage", false));
+        _messages.add(Message(aiMessage, false));
       });
       _scrollToBottom();
       _saveMessages();
@@ -120,18 +115,15 @@ class _AIChatWidgetState extends State<AIChatWidget> {
 
   Future<void> _clearChatHistory() async {
     setState(() {
-      _messages.clear(); // Clear the in-memory list
+      _messages.clear();
     });
 
-    // Clear the persisted messages from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('messages'); // Remove the 'messages' key
+    await prefs.remove('messages');
   }
 
-  // Automatically scroll to the bottom when a new message is added
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
-      // Use a Future and addPostFrameCallback to ensure the UI is fully built
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 100), () {
           _scrollController.animateTo(
@@ -149,10 +141,10 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.secondaryBackground,
         elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        title: Stack(
+          alignment: Alignment.center,
           children: [
             Image.asset(
               'assets/images/train-white-logo.png',
@@ -161,90 +153,174 @@ class _AIChatWidgetState extends State<AIChatWidget> {
             ),
           ],
         ),
+        actions: [
+          PopupMenuButton<String>(
+            color: AppTheme.primaryBackground,
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onSelected: (value) {
+              if (value == 'clear') {
+                _clearChatHistory();
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'clear',
+                child: const Text(
+                  'Clear Chat History',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Stack(
         children: [
           Column(
             children: [
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 0, bottom: 0),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      final isUserMessage = message.isUser;
-                      final isLoading = message.text == "loading";
+                child: _messages.isEmpty
+                    ? Center(
+                        child: Text(
+                          "What can I help you with?",
+                          style: AppTheme.subTitleTextStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 0, bottom: 0),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: _messages.length,
+                          itemBuilder: (context, index) {
+                            final message = _messages[index];
+                            final isUserMessage = message.isUser;
+                            final isLoading = message.text == "loading";
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        child: Align(
-                          alignment: isUserMessage
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.8,
-                            ),
-                            child: isLoading
-                                ? Container(
-                                    padding: const EdgeInsets.all(12.0),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.secondaryColor,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.0,
-                                            color: Colors.white,
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 12.0),
+                              child: Align(
+                                alignment: isUserMessage
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                  ),
+                                  child: isLoading
+                                      ? Container(
+                                          padding: const EdgeInsets.all(12.0),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.secondaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2.0,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                "Thinking...",
+                                                style: TextStyle(
+                                                    color: AppTheme
+                                                        .bodyTextStyle.color),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          padding: const EdgeInsets.all(12.0),
+                                          decoration: BoxDecoration(
+                                            color: isUserMessage
+                                                ? AppTheme.primaryColor
+                                                : AppTheme.secondaryColor,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(12),
+                                              topRight:
+                                                  const Radius.circular(12),
+                                              bottomLeft: isUserMessage
+                                                  ? const Radius.circular(12)
+                                                  : const Radius.circular(0),
+                                              bottomRight: isUserMessage
+                                                  ? const Radius.circular(0)
+                                                  : const Radius.circular(12),
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                message.text,
+                                                style: TextStyle(
+                                                    color: AppTheme
+                                                        .bodyTextStyle.color),
+                                              ),
+                                              if (!isUserMessage)
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 8.0),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppTheme.primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        // Placeholder for button action
+                                                      },
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(12.0),
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        "CONFIRM WORKOUT",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          "Thinking...",
-                                          style: TextStyle(
-                                              color:
-                                                  AppTheme.bodyTextStyle.color),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    padding: const EdgeInsets.all(12.0),
-                                    decoration: BoxDecoration(
-                                      color: isUserMessage
-                                          ? AppTheme.primaryColor
-                                          : AppTheme.secondaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: const Radius.circular(12),
-                                        topRight: const Radius.circular(12),
-                                        bottomLeft: isUserMessage
-                                            ? const Radius.circular(12)
-                                            : const Radius.circular(0),
-                                        bottomRight: isUserMessage
-                                            ? const Radius.circular(0)
-                                            : const Radius.circular(12),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      message.text,
-                                      style: TextStyle(
-                                          color: AppTheme.bodyTextStyle.color),
-                                    ),
-                                  ),
-                          ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
