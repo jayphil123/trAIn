@@ -19,7 +19,7 @@ class AppTheme {
   static const Color firstBackground = Color.fromARGB(255, 222, 224, 223);
   static const Color secondBackground = Color.fromARGB(255, 118, 118, 118);
 
-    static const EdgeInsets pagePadding = EdgeInsets.symmetric(horizontal: 24);
+  static const EdgeInsets pagePadding = EdgeInsets.symmetric(horizontal: 24);
 
   // Text style for titles
   static const TextStyle titleTextStyle = TextStyle(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'user_data/signup_info.dart';
+import 'package:provider/provider.dart';
 
 
 class ProfilePage extends StatelessWidget {
@@ -52,6 +54,8 @@ class ProfilePage extends StatelessWidget {
 class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<FormDataProvider>(context, listen: false).formData;
+
     return SizedBox(
       width: double.infinity,
       child: Container(
@@ -100,13 +104,13 @@ class ProfileHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '[USER NAME]',
+                  userData.username,
                   style: AppTheme.titleTextStyle.copyWith(fontSize: 26),
                 ),
-                Text(
-                  'user@example.com',
-                  style: AppTheme.bodyTextStyle.copyWith(fontSize: 14),
-                ),
+                // Text(
+                //   'user@example.com',
+                //   style: AppTheme.bodyTextStyle.copyWith(fontSize: 14),
+                // ),
               ],
             ),
           ),
@@ -244,6 +248,8 @@ class AthleteInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
+    
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -269,10 +275,10 @@ class AthleteInfo extends StatelessWidget {
           ),
           
           const SizedBox(height: 12),  
-          _buildDataRow('Height', "X'XX"),  // PULL FROM INSTANCE
-          _buildDataRow('Weight', 'XXX lbs'), 
-          _buildDataRow('Age', 'XX'), 
-          _buildDataRow('Gender', 'Male'), 
+          _buildDataRow('Height', "${formData.height} cm"),  // PULL FROM INSTANCE
+          _buildDataRow('Weight', '${formData.weight} kg'), 
+          _buildDataRow('Age', formData.age), 
+          _buildDataRow('Gender', formData.gender), 
         ],
       ),
     );
@@ -314,6 +320,8 @@ class TrainingInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -340,8 +348,8 @@ class TrainingInfo extends StatelessWidget {
           
           const SizedBox(height: 12), 
           
-          _buildDataRow('Intensity Level', 'Light'),  // PULL INFO
-          _buildDataRow('Goal Timeframe', 'X Months'),
+          _buildDataRow('Intensity Level', formData.intensity[0]),  // PULL INFO
+          _buildDataRow('Goal Timeframe', formData.timeframe[0]),
           
           // Goal Description with constrained width
         Padding(
@@ -360,7 +368,7 @@ class TrainingInfo extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      'Some long description that wraps around if it’s too long to fit within the specified width...etc',
+                      formData.goals.map((goal) => goal).join(", "),
                       style: AppTheme.bodyTextStyle.copyWith(
                         color: AppTheme.secondaryText, 
                       ),
@@ -413,6 +421,8 @@ class TrainingInfo extends StatelessWidget {
 class GoalInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final formData = Provider.of<FormDataProvider>(context, listen: false).formData;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -437,7 +447,7 @@ class GoalInfo extends StatelessWidget {
             thickness: 1,
           ),
           const SizedBox(height: 12),
-          _buildDataRow('Goal Description', 'Some long description that wraps around if it’s too long to fit within the specified width...etc'),
+          _buildDataRow('Goal Description', formData.workoutPlans),
         ],
       ),
     );

@@ -94,7 +94,7 @@ String alterWorkout = jsonEncode({
 
     return thing;
   } else {
-    return responseParsed["content"];
+    return "Error generating message.";
   }
 
   // print(json.decode(response.body));
