@@ -87,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   suffixIcon: IconButton(
                     icon: Icon(
+                      color: AppTheme.secondaryText,
                       passwordVisible ? Icons.visibility : Icons.visibility_off,
                     ),
                     onPressed: () {
