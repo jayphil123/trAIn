@@ -93,10 +93,10 @@ List<MapEntry<String, String>> accessWorkouts(List<Map<String, dynamic>> day) {
     // Modify the quantity format if it contains "sets" and "reps"
     if (quantity.contains('sets') && quantity.contains('reps')) {
       quantity = quantity
-          .replaceAll(' sets', '')
+          .replaceAll('sets of', 'x')
           .replaceAll(' reps', '')
-          .replaceAll('of ', '')
-          .replaceAll(' ', ' x ');
+          .replaceAll('of ', '');
+          // .replaceAll(' ', ' x ');
     }
 
     workouts.add(MapEntry(workoutName, quantity));
