@@ -4,6 +4,9 @@ import 'dart:convert';
 import '../theme.dart';
 import '../user_data/talk.dart';
 
+bool changeSplit = false;
+Map<String, dynamic> mostRecentMessage = {};
+
 class AIChatWidget extends StatefulWidget {
   const AIChatWidget({super.key});
 
@@ -85,8 +88,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   Future<void> _saveMessages() async {
     final prefs = await SharedPreferences.getInstance();
     final String messagesJson =
-        jsonEncode(_messages.map((msg) => msg.toJson()).toList());
-    // print(messagesJson);
+    jsonEncode(_messages.map((msg) => msg.toJson()).toList());
     await prefs.setString('messages', messagesJson);
   }
 
@@ -102,7 +104,9 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       _scrollToBottom();
       _saveMessages();
 
-      String aiMessage = await chatMessage(context, userMessage);
+      Map<String, dynamic> response = await chatMessage(context, userMessage);
+
+      String aiMessage = handleAiMessage(response, context);
 
       setState(() {
         _messages.removeLast();
@@ -268,7 +272,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                                                     color: AppTheme
                                                         .bodyTextStyle.color),
                                               ),
-                                              if (!isUserMessage)
+                                              if (!isUserMessage && changeSplit)
                                                 Align(
                                                   alignment: Alignment.center,
                                                   child: Container(
@@ -285,7 +289,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                                                     ),
                                                     child: TextButton(
                                                       onPressed: () {
-                                                        // Placeholder for button action
+                                                        updateWorkouts(mostRecentMessage, context);
                                                       },
                                                       style:
                                                           TextButton.styleFrom(
@@ -366,4 +370,60 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       ),
     );
   }
+}
+
+String handleAiMessage(Map<String, dynamic> response, context) {
+  print(response);
+  if (response["status"] == 2 || response["status"] == 1) {
+    changeSplit = true;
+    mostRecentMessage = response;
+    String thing = formatWorkoutSplit(response);
+
+    return thing;
+  } else if (response["status"] == 3) {
+    changeSplit = false;
+    return response["content"];
+  } else {
+    changeSplit = false;
+    return "Error generating message.";
+  }
+}
+
+String formatWorkoutSplit(Map<String, dynamic> workoutSplit) {
+  String formattedSplit = "";
+
+  List<String> days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ];
+
+  // Capitalize the first letter of the day
+  String capitalize(String input) => input[0].toUpperCase() + input.substring(1);
+
+  // Check if 'content' is a Map<String, dynamic>
+  if (workoutSplit["content"] is Map<String, dynamic>) {
+    Map<String, dynamic> workouts = workoutSplit["content"];
+
+    for (String day in days) {
+      if (workouts[day] is List) {
+        // Cast to List<Map<String, dynamic>> after verifying it's a List
+        List<Map<String, dynamic>> newDay =
+            List<Map<String, dynamic>>.from(workouts[day]);
+
+        formattedSplit += "${capitalize(day)}:\n";
+        for (Map<String, dynamic> workout in newDay) {
+          formattedSplit += "\t- ${workout["workout"]}\n";
+        }
+      }
+    }
+  } else {
+    print("Error: 'content' is not a Map.");
+  }
+
+  return formattedSplit;
 }

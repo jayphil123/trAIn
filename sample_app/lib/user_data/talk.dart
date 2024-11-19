@@ -61,11 +61,10 @@ Future<void> sendFormDataToServer(BuildContext context) async {
   }
 }
 
-Future<String> chatMessage(BuildContext context, String msg) async {
+Future<Map<String, dynamic>> chatMessage(BuildContext context, String msg) async {
   final workoutProvider =
       Provider.of<WorkoutSplitProvider>(context, listen: false);
   String payload = msg;
-  payload += 'Here is my current workout';
 
   String alterWorkout = jsonEncode({
     "monday": workoutProvider.workoutSplit.monday,
@@ -88,18 +87,7 @@ Future<String> chatMessage(BuildContext context, String msg) async {
   final response = await http.get(url);
   final responseParsed = json.decode(response.body);
 
-  print(responseParsed["status"]);
-  if (responseParsed["status"] == 2 || responseParsed["status"] == 1) {
-    updateWorkouts(responseParsed, context);
-    String thing = formatWorkoutSplit(responseParsed);
-    print(thing);
-
-    return thing;
-  } else {
-    return "Error generating message.";
-  }
-
-  // print(json.decode(response.body));
+  return responseParsed;
 }
 
 Future<void> sendSignUpDataToBackend(BuildContext context) async {
@@ -154,44 +142,6 @@ Future<Map<String, dynamic>> loginRequest(
 
   final responseParsed = json.decode(response.body);
   return responseParsed;
-}
-
-String formatWorkoutSplit(Map<String, dynamic> workoutSplit) {
-  String formattedSplit = "";
-
-  List<String> days = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday"
-  ];
-
-  // Check if 'content' is a Map<String, dynamic>
-  if (workoutSplit["content"] is Map<String, dynamic>) {
-    Map<String, dynamic> workouts = workoutSplit["content"];
-
-    for (String day in days) {
-      if (workouts[day] is List) {
-        // Cast to List<Map<String, dynamic>> after verifying it's a List
-        List<Map<String, dynamic>> new_day =
-            List<Map<String, dynamic>>.from(workouts[day]);
-        formattedSplit += "$day: ";
-        for (Map<String, dynamic> workout in new_day) {
-          formattedSplit += "${workout["workout"]} ";
-        }
-        formattedSplit = formattedSplit.substring(
-            0, formattedSplit.length - 1); // Remove trailing space
-        formattedSplit += "\n";
-      }
-    }
-  } else {
-    print("Error: 'content' is not a Map.");
-  }
-
-  return formattedSplit;
 }
 
 void updateWorkouts(final oldSplit, BuildContext context) {

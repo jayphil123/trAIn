@@ -66,22 +66,31 @@ class SampleWorkoutWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      workouts[index].key,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppTheme.primaryText,
+                    Expanded(
+                      child: Text(
+                        workouts[index].key,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.primaryText,
+                        ),
+                        overflow: TextOverflow.visible, // Ensure wrapping
+                        softWrap: true,
                       ),
                     ),
-                    Text(
-                      workouts[index].value,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppTheme.primaryText,
+                    SizedBox(width: 8), // Add spacing between the two text fields
+                    Expanded(
+                      child: Text(
+                        workouts[index].value,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.primaryText,
+                        ),
+                        overflow: TextOverflow.visible, // Ensure wrapping
+                        softWrap: true,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

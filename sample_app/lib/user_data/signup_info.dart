@@ -5,7 +5,7 @@ String formatMuscleGroups(List<Map<String, dynamic>> data) {
   // Step 1: Extract primary_muscles into a Set
   Set<String> uniquePrimaryMuscles = {};
   for (var workout in data) {
-    if (workout.containsKey('primary_muscles')) {
+    if (workout.containsKey('primary_muscles') && uniquePrimaryMuscles.length < 3) {
       // Capitalize the first letter of the muscle group
       String muscleGroup = workout['primary_muscles'];
 
