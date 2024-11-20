@@ -2,6 +2,7 @@ import '/components/workout_schedule.dart';
 import 'package:flutter/material.dart';
 import 'chat.dart' show TrAInChatWidget;
 import 'profile.dart' show ProfilePage;
+import 'theme.dart';
 
 class HomepageWidget extends StatefulWidget {
   /// Original homepage for trAIn.
@@ -41,6 +42,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
+          selectedItemColor: AppTheme.primaryColor,
+          unselectedItemColor: AppTheme.accentColor,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.chat),

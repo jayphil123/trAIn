@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:train_app/newprofile1.dart';
 import 'newprofile1.dart' show NewProfilePage1;
-import 'user_data/talk.dart';
+import 'theme.dart';
+import 'package:provider/provider.dart';
+import 'user_data/signup_info.dart';
 
 class SignUpPage1 extends StatefulWidget {
   const SignUpPage1({super.key});
@@ -12,7 +14,6 @@ class SignUpPage1 extends StatefulWidget {
 
 class _SignUpPage1State extends State<SignUpPage1> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final textController = TextEditingController();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -23,24 +24,11 @@ class _SignUpPage1State extends State<SignUpPage1> {
 
   @override
   void dispose() {
-    textController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  // Function to call when the user presses the "Next" button
-  Future<void> _onSubmit() async {
-    // Get values from text controllers
-    final firstName = _firstNameController.text;
-    final lastName = _lastNameController.text;
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-
-    // Call the function to send data to the backend
-    await sendSignUpDataToBackend(context, firstName, lastName, username, password);
   }
 
   @override
@@ -58,24 +46,54 @@ class _SignUpPage1State extends State<SignUpPage1> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Full Name
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: AppTheme.pagePadding,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, 
+                  children: [
+                    const Text(
+                      'Create your trAIn workout profile',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Set up a basic account to get started',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+                // Full Name Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.only(bottom: 16),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Enter your full name'),
+                        Text(
+                          'Enter your full name',
+                          style: TextStyle(
+                            color: AppTheme.primaryText,
+                            fontSize: 14, 
+                          ),
+                        ),
                         SizedBox(height: 8),
                         Row(
                           children: [
@@ -84,6 +102,10 @@ class _SignUpPage1State extends State<SignUpPage1> {
                                 controller: _firstNameController,
                                 decoration: InputDecoration(
                                   hintText: 'First Name',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: AppTheme.secondaryText
+                                  ),
                                   border: InputBorder.none,
                                   filled: true,
                                 ),
@@ -91,7 +113,7 @@ class _SignUpPage1State extends State<SignUpPage1> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
@@ -99,6 +121,10 @@ class _SignUpPage1State extends State<SignUpPage1> {
                                 controller: _lastNameController,
                                 decoration: InputDecoration(
                                   hintText: 'Last Name',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: AppTheme.secondaryText
+                                  ),
                                   border: InputBorder.none,
                                   filled: true,
                                 ),
@@ -111,18 +137,23 @@ class _SignUpPage1State extends State<SignUpPage1> {
                   ),
                 ),
 
-                // Username
+                // Username Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.only(bottom: 16), // 32px spacing
                   child: Container(
-                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Create a username'),
+                        Text(
+                          'Create an username',
+                          style: TextStyle(
+                            color: AppTheme.primaryText,
+                            fontSize: 14, 
+                          ),
+                        ),
                         SizedBox(height: 8),
                         Row(
                           children: [
@@ -131,6 +162,10 @@ class _SignUpPage1State extends State<SignUpPage1> {
                                 controller: _usernameController,
                                 decoration: InputDecoration(
                                   hintText: 'Username',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: AppTheme.secondaryText
+                                  ),
                                   border: InputBorder.none,
                                   filled: true,
                                 ),
@@ -143,27 +178,36 @@ class _SignUpPage1State extends State<SignUpPage1> {
                   ),
                 ),
 
-                // Password
+                // Password Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.only(bottom: 0),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Create a password'),
+                        Text(
+                          'Create a password',
+                          style: TextStyle(
+                            color: AppTheme.primaryText,
+                            fontSize: 14, 
+                          ),
+                        ),
                         SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
                               child: TextFormField(
                                 controller: _passwordController,
-                                obscureText: !passwordVisible, // Toggle password visibility
+                                obscureText: !passwordVisible,
                                 decoration: InputDecoration(
                                   hintText: 'Password',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: AppTheme.secondaryText
+                                  ),
                                   border: InputBorder.none,
                                   filled: true,
                                   suffixIcon: IconButton(
@@ -188,22 +232,29 @@ class _SignUpPage1State extends State<SignUpPage1> {
                   ),
                 ),
 
+                const SizedBox(height: 30),
+
                 // Next Button
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: ElevatedButton(
                     onPressed: () {
-                      _onSubmit; // Call the _onSubmit function here
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateName("${_firstNameController.text} ${_lastNameController.text}");
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updateUsername(_usernameController.text);
+                      Provider.of<FormDataProvider>(context, listen: false)
+                        .updatePassword(_passwordController.text);
                       Navigator.of(context).push( // Go to the next page
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const NewProfilePage1()),
+                          builder: (context) => const NewProfilePage1(),
+                        ),
                       );
                     },
                     child: const Text('Next'),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
                 // Logo Image
                 ClipRRect(

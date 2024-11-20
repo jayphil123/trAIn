@@ -1,6 +1,7 @@
 from rag import rag_workouts, handle_conversation
-from flask import Flask, request, redirect, url_for, session, Response, make_response
+from flask import Flask, request, redirect, url_for, session, Response, make_response, jsonify
 from helper_functions import check_existing_login, create_new_login, salt_and_hash_password, check_valid_cookie, add_user_stats, get_user_info
+import json
 
 
 app = Flask(__name__)
@@ -46,12 +47,12 @@ def get_workouts():
 def send_convo():
     """Handles all chat messages."""
 
-    # Veirfy Cookies 
-    cookies = request.session
-    username = cookies.get('username')
-    cookie = cookies.get('cookie')
+    # Verify Cookies 
+    # cookies = request.session
+    # username = cookies.get('username')
+    # cookie = cookies.get('cookie')
 
-    status = check_valid_cookie(username, cookie)
+    # status = check_valid_cookie(username, cookie)
     status = True
     response = {
         "status": 0,
@@ -73,6 +74,10 @@ def send_convo():
 
     # Gets workout and chat history routine fields
     existing_workout = request.args.get("existing_workout",{})
+
+    if type(existing_workout) == type("string"):
+        existing_workout = json.loads(existing_workout)
+
     chat_history = request.args.get("chat_history",{})
 
     response = {
@@ -98,7 +103,7 @@ def login_page():
     password = args.get('password')
 
     if not check_existing_login(username, password):
-        return Response({"status": 1, "message": "Failed login"}, 400)
+        return jsonify({"status": 1, "message": "Failed login"}), 400
 
 
     user_info = get_user_info(username)
@@ -110,9 +115,9 @@ def login_page():
     }
 
     # Set session data
-    session['username'] = username
+    # session['username'] = username
 
-    return Response(response, status=200)
+    return jsonify(response), 200
 
 
 @app.route('/signup_form', methods=['POST'])

@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'user_data/talk.dart';
 import 'homepage.dart';
 
-Future<void> _initializePage(context) async {
+String loadingWordage = "";
+
+Future<void> _initializePage(context, fromLogin) async {
+  if (!fromLogin) {
+    loadingWordage = "Building";
+    await sendSignUpDataToBackend(context);
+  } else {
+    loadingWordage = "Loading";
+  }
   await sendFormDataToServer(context);
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(builder: (context) => const HomepageWidget()),
@@ -10,7 +18,12 @@ Future<void> _initializePage(context) async {
 }
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  final bool fromLogin;
+
+  const SplashScreen({
+    super.key,
+    required this.fromLogin
+  });
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -20,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _initializePage(context);
+    _initializePage(context, widget.fromLogin);
   }
 
   @override
@@ -40,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              'Loading your AI workout',
+              '$loadingWordage your AI workout',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
