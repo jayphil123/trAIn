@@ -72,7 +72,7 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                           title: 'What intensity level do you prefer?',
                           options: [
                             'Light\n (walking, gentle stretching)',
-                            'Moderate\n (jogging, bodyweight exercises)',
+                            'Moderate\n (jogging, bodyweight)',
                             'Intense\n (HIIT, heavy lifting)',
                           ],
                           selectedOptions: selectedIntensityLevels,
@@ -95,20 +95,26 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
                           alignment: Alignment.center,
                           child: ElevatedButton(
                             onPressed: () {
-                              Provider.of<FormDataProvider>(context, listen: false)
-                                  .updateWorkoutPlans(goalDescriptionController.text);
-                              Provider.of<FormDataProvider>(context, listen: false)
+                              Provider.of<FormDataProvider>(context,
+                                      listen: false)
+                                  .updateWorkoutPlans(
+                                      goalDescriptionController.text);
+                              Provider.of<FormDataProvider>(context,
+                                      listen: false)
                                   .updateIntensity(selectedIntensityLevels);
-                              Provider.of<FormDataProvider>(context, listen: false)
+                              Provider.of<FormDataProvider>(context,
+                                      listen: false)
                                   .updateTimeframe(selectedTimeframes);
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SplashScreen(fromLogin: false,)),
+                                    builder: (context) => const SplashScreen(
+                                          fromLogin: false,
+                                        )),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -161,7 +167,8 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 2),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryBackground : Colors.transparent,
+              color:
+                  isSelected ? AppTheme.primaryBackground : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
             ),
             child: CheckboxListTile(
@@ -169,8 +176,8 @@ class _NewProfilePage3State extends State<NewProfilePage3> {
               title: Text(
                 option,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: isSelected ? Colors.white : AppTheme.secondaryText,
-                ),
+                      color: isSelected ? Colors.white : AppTheme.secondaryText,
+                    ),
               ),
               onChanged: (value) {
                 setState(() {

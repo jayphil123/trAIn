@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="resources/logo.png" />
+  <img src="resources/train-white-logo.png" />
 </p>
 
 ## What is trAIn?
@@ -8,7 +8,8 @@ trAIn is an innovative mobile app designed to revolutionize personal fitness by 
 
 ## Set Up Docker/PostgreSQL
 
-Step 1.) Install Docker 
+Step 1.) Install Docker
+
 - Download the appropriate version of docker desktop app onto your computer (for windows make sure its the right version chip arcitechture arm64 vs x86 for your device)
 
 - Once downloaded, open the desktop app
@@ -30,7 +31,7 @@ CONTAINER ID   IMAGE             COMMAND                  CREATED        STATUS 
 6df75c658f04   postgres:17.0     "docker-entrypoint.s…"   1 second ago   Up Less than a second   0.0.0.0:5432->5432/tcp                             postgresql
 ```
 
-- *IMPORTANT*: After you run, change password back to tempPassword in "/bin/setup_postgre.sh" before committing to repo
+- _IMPORTANT_: After you run, change password back to tempPassword in "/bin/setup_postgre.sh" before committing to repo
 
 ## Set Up Python
 
@@ -55,16 +56,19 @@ DB_USER=postgres
 DB_PASSWORD=tempPassword
 DB_NAME=my_new_database
 ```
-** NOTE MAKE SURE YOU'RE GIT IGNORE CONTAINS `.env` OR YOUR PASSWORD WILL LEAK
+
+\*\* NOTE MAKE SURE YOU'RE GIT IGNORE CONTAINS `.env` OR YOUR PASSWORD WILL LEAK
 
 Step 5.) Run postgre_make_db.py
 
-- execute `python3 postgre_make_db.py`, and if the output says `Database 'my_new_database' created sucessfully` congrats it worked! 
+- execute `python3 postgre_make_db.py`, and if the output says `Database 'my_new_database' created sucessfully` congrats it worked!
 
 Step 5.) Run `data_to_db.py`
+
 - Populates database with workouts
 
 Step 6.) Run `docker exec -it my_postgres /bin/bash`
+
 - Enters you into a bash terminal of the docker container
 
 Step 7.) Log into your postgres DB with `psql -U postgres`
@@ -78,26 +82,29 @@ $ \dt
 
 - Theses commands will first select database and then list all tables in the database
 
-
 ## Project File Hierarchy
-bin/*
+
+bin/\*
+
 - Shell scripts to setup, run, and restart postgreSQL
 
-db-setup/*
-- SQL schema, python files setting up our database and tables  
-- postgre_make_db.py: creates our overarching database to hold all tables  
-- postgre_make_tb.py: creates user database  
-- data_to_db.py: converts json workout data to a table in our postgreSQL database  
-- free-exercise-db.json: the workout data used as context for the model  
-- workouts_schema.sql: the schema for the table created in data_to_db.py  
+db-setup/\*
 
-web_api/*
+- SQL schema, python files setting up our database and tables
+- postgre_make_db.py: creates our overarching database to hold all tables
+- postgre_make_tb.py: creates user database
+- data_to_db.py: converts json workout data to a table in our postgreSQL database
+- free-exercise-db.json: the workout data used as context for the model
+- workouts_schema.sql: the schema for the table created in data_to_db.py
+
+web_api/\*
+
 - Python files for handling backend messaging
 - api_endpoints.py: offers several API endpoints about sending user data, sending chat message, and login capabilities
 - rag.py: offers all rag functions to generate workouts, replace workouts, or general chat capabilities
 - helper_functions: general functions to help with other functions needed for login and rag
-- examples/*.json: Example responses for different chat types for api_endpoints.py 
+- examples/\*.json: Example responses for different chat types for api_endpoints.py
 
-sample_app/*
-- Frontend application built using flutter  
+sample_app/\*
 
+- Frontend application built using flutter
